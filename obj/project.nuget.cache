@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "9T5prroAc44=",
+  "dgSpecHash": "uqSOztDm48E=",
   "success": true,
   "projectFilePath": "C:\\Users\\Reyes\\Downloads\\1. Campus\\2. Projects\\.NET\\SGIC-APP\\SGIC-APP.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Reyes\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.2\\microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "C:\\Users\\Reyes\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.2\\microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
+    "C:\\Users\\Reyes\\.nuget\\packages\\npgsql\\9.0.3\\npgsql.9.0.3.nupkg.sha512"
+  ],
   "logs": []
 }
