@@ -9,7 +9,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        string connStr = "server=localhost;database=introcsharp;user=root;password=Elise567*;";
+        string connStr = "server=localhost;database=NJSIGC;user=root;password=123456;";
         IDbFactory factory = new MySqlDbFactory(connStr);
         UIPrincipal UIPrincipal = new UIPrincipal(factory);
         UIPrincipal.MostrarMenu();
