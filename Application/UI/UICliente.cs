@@ -44,8 +44,13 @@ public class UICliente
                 case "2":
                     Console.Clear();
                     Console.WriteLine("Crear nuevo cliente.");
-                    Console.Write("Ingrese nombre del cliente: ");
-                    clienteService.CrearCliente(Console.ReadLine()!);
+                    Console.Write("Ingrese el ID del tercero: ");
+                    var terceroId = Console.ReadLine();
+                    Console.Write("Ingrese la fecha de nacimiento (yyyy-MM-dd): ");
+                    var fechaNac = DateTime.Parse(Console.ReadLine()!);
+                    Console.Write("Ingrese la fecha de última compra (yyyy-MM-dd): ");
+                    var fechaUltima = DateTime.Parse(Console.ReadLine()!);
+                    clienteService.CrearCliente(terceroId!, fechaNac, fechaUltima);
                     Console.WriteLine("\nCliente creado.");
                     Console.WriteLine("Presione una tecla para continuar...");
                     Console.ReadKey();
@@ -55,9 +60,13 @@ public class UICliente
                     Console.WriteLine("Actualizar cliente.");
                     Console.Write("Ingrese ID del cliente a actualizar: ");
                     int idActualizar = int.Parse(Console.ReadLine()!);
-                    Console.Write("Nuevo nombre: ");
-                    string nuevoNombre = Console.ReadLine()!;
-                    clienteService.ActualizarCliente(idActualizar, nuevoNombre);
+                    Console.Write("Ingrese el ID del tercero: ");
+                    var terceroId2 = Console.ReadLine();
+                    Console.Write("Nueva fecha de nacimiento (yyyy-MM-dd): ");
+                    var fechaNac2 = DateTime.Parse(Console.ReadLine()!);
+                    Console.Write("Nueva fecha de última compra (yyyy-MM-dd): ");
+                    var fechaUltima2 = DateTime.Parse(Console.ReadLine()!);
+                    clienteService.ActualizarCliente(terceroId2, fechaNac2, fechaUltima2);
                     Console.WriteLine("\nCliente actualizado.");
                     Console.WriteLine("Presione una tecla para continuar...");
                     Console.ReadKey();
