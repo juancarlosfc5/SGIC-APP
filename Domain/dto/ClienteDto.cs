@@ -1,29 +1,43 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace SGIC_APP.Domain.dto
 {
     public class ClienteDto
     {
-        // Terceros
-        public int Id { get; set; }
+        public string? TerceroId { get; set; }
 
-        public string? nombre { get; set; }
+        [Required(ErrorMessage = "El nombre es requerido")]
+        [StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres")]
+        public string? Nombre { get; set; }
 
-        public string? apellidos { get; set; }
+        [Required(ErrorMessage = "Los apellidos son requeridos")]
+        [StringLength(50, ErrorMessage = "Los apellidos no pueden tener más de 50 caracteres")]
+        public string? Apellidos { get; set; }
 
-        public string? email { get; set; }
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El email no es válido")]
+        [StringLength(80, ErrorMessage = "El email no puede tener más de 80 caracteres")]
+        public string? Email { get; set; }
 
-        public int tipo_doc_id { get; set; }
+        public string? Telefono { get; set; }
+        public string? TipoTelefono { get; set; }
 
-        public int tipo_tercero_id { get; set; }
+        [Required(ErrorMessage = "El tipo de documento es requerido")]
+        public int TipoDocId { get; set; }
 
-        // Clientes
+        [Required(ErrorMessage = "El tipo de tercero es requerido")]
+        public int TipoTerceroId { get; set; }
 
-        public DateTime fecha_nac { get; set; }
+        [Required(ErrorMessage = "La ciudad es requerida")]
+        public int CiudadId { get; set; }
 
-        public DateTime ultima_compra { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public DateTime? FechaUltimaCompra { get; set; }
+
+        public string? Direccion { get; set; }
+        public bool Activo { get; set; } = true;
+
+        public string NombreCompleto => $"{Nombre} {Apellidos}";
     }
 }

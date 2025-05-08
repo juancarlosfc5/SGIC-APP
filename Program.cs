@@ -1,17 +1,26 @@
-﻿using SGICAPP.Application.Services;
-using SGICAPP.Application.UI.Clientes;
-using SGICAPP.Application.UI.Principal;
-using SGICAPP.Domain.Entities;
-using SGICAPP.Domain.Factory;
-using SGICAPP.Infrastructure.Mysql;
+﻿using System;
+using SGIC_APP.Application.UI;
+using SGIC_APP.Infrastructure.Repositories;
 
-internal class Program
+namespace SGIC_APP
 {
-    private static void Main(string[] args)
+    class Program
     {
-        string connStr = "server=localhost;database=NJSIGC;user=campus2023;password=campus2023;";
-        IDbFactory factory = new MySqlDbFactory(connStr);
-        UIPrincipal UIPrincipal = new UIPrincipal(factory);
-        UIPrincipal.MostrarMenu();
+        static void Main(string[] args)
+        {
+            try
+            {
+                string connectionString = "Server=localhost;Database=NJSIGC;User=root;Password=123456;";
+                var clienteRepository = new ImplDtoCliente(connectionString);
+                var uiPrincipal = new UIPrincipal(clienteRepository);
+                uiPrincipal.MostrarMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine("Presione cualquier tecla para salir...");
+                Console.ReadKey();
+            }
+        }
     }
 }

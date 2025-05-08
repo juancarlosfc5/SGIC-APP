@@ -1,13 +1,13 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SGICAPP.Domain.Ports;
 
 namespace SGIC_APP.Domain.Ports
 {
-    public interface IDtoCliente : IGenericRepository<IDtoCliente>
+    public interface IDtoCliente<T> where T : class
     {
-        
+        IEnumerable<T> ObtenerTodos();
+        T? ObtenerPorId(string id);
+        void Crear(T dto);
+        void Actualizar(T dto);
+        void Eliminar(string id);
     }
 }

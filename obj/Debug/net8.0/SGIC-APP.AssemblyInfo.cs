@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SGIC-APP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79f0ba048ab3d682f60abbbf2e6c6ddf6a72c998")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a455f7013409c0cd0e8651e85ecbdbc1b867f595")]
 [assembly: System.Reflection.AssemblyProductAttribute("SGIC-APP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SGIC-APP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
