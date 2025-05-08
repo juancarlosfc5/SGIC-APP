@@ -14,6 +14,7 @@ public class UIPrincipal{
             Console.Clear();
             Console.WriteLine("--- MENÚ PRINCIPAL ---");
             Console.WriteLine("1. Clientes");
+            Console.WriteLine("2. ");
             Console.WriteLine("0. Salir");
             Console.Write("Opción: ");
             var opcion = Console.ReadLine();

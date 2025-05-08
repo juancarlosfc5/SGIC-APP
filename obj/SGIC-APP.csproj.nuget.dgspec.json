@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Usuario\\Desktop\\Proyecto C#\\SGIC-APP\\SGIC-APP.csproj": {}
+    "/home/camper/Escritorio/C# proyecto/SGIC-APP/SGIC-APP.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Usuario\\Desktop\\Proyecto C#\\SGIC-APP\\SGIC-APP.csproj": {
+    "/home/camper/Escritorio/C# proyecto/SGIC-APP/SGIC-APP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Usuario\\Desktop\\Proyecto C#\\SGIC-APP\\SGIC-APP.csproj",
+        "projectUniqueName": "/home/camper/Escritorio/C# proyecto/SGIC-APP/SGIC-APP.csproj",
         "projectName": "SGIC-APP",
-        "projectPath": "C:\\Users\\Usuario\\Desktop\\Proyecto C#\\SGIC-APP\\SGIC-APP.csproj",
-        "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Usuario\\Desktop\\Proyecto C#\\SGIC-APP\\obj\\",
+        "projectPath": "/home/camper/Escritorio/C# proyecto/SGIC-APP/SGIC-APP.csproj",
+        "packagesPath": "/home/camper/.nuget/packages/",
+        "outputPath": "/home/camper/Escritorio/C# proyecto/SGIC-APP/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/camper/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -64,7 +64,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.408/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
