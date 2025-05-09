@@ -258,6 +258,7 @@ INSERT INTO tercero (id, nombre, apellidos, email, tipo_doc_id, tipo_tercero_id,
 ('1002', 'Ana', 'Gómez', 'ana.gomez@email.com', 1, 2, 2), 
 ('1003', 'Carlos', 'Martínez', 'carlos.martinez@email.com', 2, 3, 3);
 
+
 -- tercero_telefono
 INSERT INTO tercero_telefono (numero, tipo, tercero_id) VALUES 
 ('3001234567', 'Celular', '1001'), 

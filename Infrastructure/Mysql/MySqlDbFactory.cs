@@ -1,5 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using SGIC_APP.Domain.Factory;
 using SGIC_APP.Domain.Ports;
 using SGIC_APP.Domain.dto;
+using SGIC_APP.Domain.Entities;
 using SGIC_APP.Infrastructure.Repositories;
 
 namespace SGIC_APP.Infrastructure.Mysql
@@ -13,9 +19,24 @@ namespace SGIC_APP.Infrastructure.Mysql
             _connectionString = connectionString;
         }
 
-        public IDtoCliente<ClienteDto> CrearClienteDtoRepository()
+        public IDtoCliente<ClienteDto> CrearClienteRepository()
         {
             return new ImplDtoCliente(_connectionString);
+        }
+
+        public IDtoEmpleado<EmpleadoDto> CrearEmpleadoRepository()
+        {
+            return new ImplDtoEmpleado(_connectionString);
+        }
+
+        public IDtoProducto<Producto> CrearProductoRepository()
+        {
+            return new ImplDtoProducto(_connectionString);
+        }
+
+        public IDtoProveedor<Proveedor> CrearProveedorRepository()
+        {
+            return new ImplDtoProveedor(_connectionString);
         }
     }
 } 

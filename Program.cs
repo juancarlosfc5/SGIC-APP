@@ -1,6 +1,7 @@
 ﻿using System;
+using SGIC_APP.Domain.Factory;
+using SGIC_APP.Infrastructure.Mysql;
 using SGIC_APP.Application.UI;
-using SGIC_APP.Infrastructure.Repositories;
 
 namespace SGIC_APP
 {
@@ -11,8 +12,14 @@ namespace SGIC_APP
             try
             {
                 string connectionString = "Server=localhost;Database=NJSIGC;User=root;Password=123456;";
-                var clienteRepository = new ImplDtoCliente(connectionString);
-                var uiPrincipal = new UIPrincipal(clienteRepository);
+                IDbFactory dbFactory = new MySqlDbFactory(connectionString);
+
+                var uiCliente = new UIClienteDto(dbFactory.CrearClienteRepository());
+                var uiEmpleado = new UIEmpleadoDto(dbFactory.CrearEmpleadoRepository());
+                var uiProducto = new UIProductoDto(dbFactory.CrearProductoRepository());
+                var uiProveedor = new UIProveedorDto(dbFactory.CrearProveedorRepository());
+
+                var uiPrincipal = new UIPrincipal(dbFactory);
                 uiPrincipal.MostrarMenu();
             }
             catch (Exception ex)
