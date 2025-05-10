@@ -11,7 +11,7 @@ namespace SGIC_APP
         {
             try
             {
-                string connectionString = "Server=localhost;Database=NJSIGC;User=root;Password=123456;";
+                string connectionString = "Server=localhost;Database=NJSIGC;User=root;Password=Elise567*;";
                 IDbFactory dbFactory = new MySqlDbFactory(connectionString);
 
                 var uiCliente = new UIClienteDto(dbFactory.CrearClienteRepository());
