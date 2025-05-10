@@ -217,6 +217,8 @@ CREATE TABLE plan_producto (
     FOREIGN KEY (producto_id) REFERENCES producto(id)
 );
 
+SHOW TABLES;
+
 
 DML 
 
@@ -367,3 +369,36 @@ INSERT INTO plan_producto (plan_id, producto_id) VALUES
 (2, 2), 
 (3, 3);
 
+DROP PROCEDURE IF EXISTS sp_crear_cliente;
+DELIMITER $$
+
+CREATE PROCEDURE sp_crear_cliente(
+    IN p_tercero_id VARCHAR(20),
+    IN p_nombre VARCHAR(50),
+    IN p_apellidos VARCHAR(50),
+    IN p_email VARCHAR(80),
+    IN p_tipo_doc_id INT,
+    IN p_tipo_tercero_id INT,
+    IN p_ciudad_id INT,
+    IN p_fecha_nac DATE,
+    IN p_fecha_ultima_compra DATE
+)
+BEGIN
+    START TRANSACTION;
+
+    INSERT INTO tercero (
+        id, nombre, apellidos, email, tipo_doc_id, tipo_tercero_id, ciudad_id
+    ) VALUES (
+        p_tercero_id, p_nombre, p_apellidos, p_email, p_tipo_doc_id, p_tipo_tercero_id, p_ciudad_id
+    );
+
+    INSERT INTO cliente (
+        tercero_id, fecha_nac, fecha_ultima_compra
+    ) VALUES (
+        p_tercero_id, p_fecha_nac, p_fecha_ultima_compra
+    );
+
+    COMMIT;
+END$$
+
+DELIMITER ;

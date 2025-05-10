@@ -9,6 +9,12 @@ namespace SGIC_APP.Application.UI
     public class UIEmpleadoDto
     {
         private readonly IDtoEmpleado<EmpleadoDto> _empleadoRepository;
+        private static readonly Dictionary<int, string> TiposTercero = new Dictionary<int, string>
+        {
+            { 1, "Cliente" },
+            { 2, "Empleado" },
+            { 3, "Proveedor" }
+        };
 
         public UIEmpleadoDto(IDtoEmpleado<EmpleadoDto> empleadoRepository)
         {
@@ -25,7 +31,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Crear Empleado");
                 Console.WriteLine("3. Actualizar Empleado");
                 Console.WriteLine("4. Eliminar Empleado");
-                Console.WriteLine("5. Volver al Menú Principal");
+                Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -46,7 +52,7 @@ namespace SGIC_APP.Application.UI
                         case "4":
                             EliminarEmpleado();
                             break;
-                        case "5":
+                        case "0":
                             return;
                         default:
                             Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -159,9 +165,14 @@ namespace SGIC_APP.Application.UI
             if (!int.TryParse(Console.ReadLine(), out int tipoDocId))
                 throw new ArgumentException("Tipo de documento inválido");
 
-            Console.Write("Tipo de Tercero ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int tipoTerceroId))
-                throw new ArgumentException("Tipo de tercero inválido");
+            Console.WriteLine("\nTipos de Tercero disponibles:");
+            foreach (var tipo in TiposTercero)
+            {
+                Console.WriteLine($"{tipo.Key} - {tipo.Value}");
+            }
+            Console.Write("\nSeleccione el Tipo de Tercero (ID): ");
+            if (!int.TryParse(Console.ReadLine(), out int tipoTerceroId) || !TiposTercero.ContainsKey(tipoTerceroId))
+                throw new ArgumentException("Tipo de tercero inválido. Debe seleccionar uno de los tipos listados.");
 
             Console.Write("Ciudad ID: ");
             if (!int.TryParse(Console.ReadLine(), out int ciudadId))
