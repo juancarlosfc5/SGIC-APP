@@ -31,7 +31,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Crear nuevo cliente");
                 Console.WriteLine("3. Actualizar cliente");
                 Console.WriteLine("4. Eliminar cliente");
-                Console.WriteLine("5. Volver al menú principal");
+                Console.WriteLine("0. Volver al menú principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 if (!int.TryParse(Console.ReadLine(), out int opcion))
@@ -57,7 +57,7 @@ namespace SGIC_APP.Application.UI
                         case 4:
                             EliminarCliente();
                             break;
-                        case 5:
+                        case 0:
                             return;
                         default:
                             Console.WriteLine("\nOpción inválida. Presione cualquier tecla para continuar...");
@@ -97,36 +97,6 @@ namespace SGIC_APP.Application.UI
             Console.ReadKey();
         }
 
-        private void BuscarClientePorId()
-        {
-            Console.Clear();
-            Console.WriteLine("=== BUSCAR CLIENTE ===\n");
-            
-            Console.Write("Ingrese el TERCERO_ID del cliente: ");
-            var id = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                Console.WriteLine("\nEl TERCERO_ID no puede estar vacío. Presione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
-
-            var cliente = _clienteRepository.ObtenerPorId(id);
-            if (cliente == null)
-            {
-                Console.WriteLine("\nNo se encontró el cliente.");
-            }
-            else
-            {
-                Console.WriteLine("\n=== DETALLES DEL CLIENTE ===");
-                MostrarCliente(cliente);
-            }
-
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
-        }
-
         private void CrearCliente()
         {
             Console.Clear();
@@ -136,6 +106,13 @@ namespace SGIC_APP.Application.UI
             var terceroId = Console.ReadLine() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(terceroId))
                 throw new Exception("El TERCERO_ID es requerido.");
+            if (_clienteRepository.ObtenerPorId(terceroId) != null)
+            {
+                Console.WriteLine("\nEl TERCERO_ID ingresado ya está en uso (cliente, empleado o proveedor).");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
 
             Console.Write("Nombre: ");
             var nombre = Console.ReadLine() ?? string.Empty;
@@ -176,21 +153,21 @@ namespace SGIC_APP.Application.UI
                 throw new Exception("La ciudad debe ser un número entero.");
             cliente.CiudadId = ciudadId;
 
-            Console.Write("Fecha de Nacimiento (dd/MM/yyyy): ");
+            Console.Write("Fecha de Nacimiento (yyyy-MM-dd): ");
             var fechaNacStr = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(fechaNacStr))
             {
                 if (!DateTime.TryParse(fechaNacStr, out DateTime fechaNac))
-                    throw new Exception("El formato de fecha debe ser dd/MM/yyyy.");
+                    throw new Exception("El formato de fecha debe ser yyyy-MM-dd.");
                 cliente.FechaNacimiento = fechaNac;
             }
 
-            Console.Write("Fecha de Última Compra (dd/MM/yyyy): ");
+            Console.Write("Fecha de Última Compra (yyyy-MM-dd): ");
             var fechaUltimaCompraStr = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(fechaUltimaCompraStr))
             {
                 if (!DateTime.TryParse(fechaUltimaCompraStr, out DateTime fechaUltimaCompra))
-                    throw new Exception("El formato de fecha debe ser dd/MM/yyyy.");
+                    throw new Exception("El formato de fecha debe ser yyyy-MM-dd.");
                 cliente.FechaUltimaCompra = fechaUltimaCompra;
             }
 
@@ -204,6 +181,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR CLIENTE ===\n");
+
+            var clientes = _clienteRepository.ObtenerTodos();
+            if (!clientes.Any())
+            {
+                Console.WriteLine("No hay clientes disponibles.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Listado de clientes disponibles:");
+            foreach(var cli in clientes)
+            {
+                Console.WriteLine($"Tercero_ID: {cli.TerceroId}  Nombre: {cli.NombreCompleto}");
+            }
+            Console.WriteLine(new string('-', 50));
 
             Console.Write("Ingrese el TERCERO_ID del cliente a actualizar: ");
             var id = Console.ReadLine();
@@ -269,7 +261,7 @@ namespace SGIC_APP.Application.UI
             if (!string.IsNullOrWhiteSpace(fechaNacStr))
             {
                 if (!DateTime.TryParse(fechaNacStr, out DateTime fechaNac))
-                    throw new Exception("El formato de fecha debe ser dd/MM/yyyy.");
+                    throw new Exception("El formato de fecha debe ser yyyy-MM-dd.");
                 cliente.FechaNacimiento = fechaNac;
             }
 
@@ -283,6 +275,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR CLIENTE ===\n");
+
+            var clientes = _clienteRepository.ObtenerTodos();
+            if (!clientes.Any())
+            {
+                Console.WriteLine("No hay clientes disponibles.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Listado de clientes disponibles:");
+            foreach(var cli in clientes)
+            {
+                Console.WriteLine($"Tercero_ID: {cli.TerceroId}  Nombre: {cli.NombreCompleto}");
+            }
+            Console.WriteLine(new string('-', 50));
 
             Console.Write("Ingrese el TERCERO_ID del cliente a eliminar: ");
             var id = Console.ReadLine();
