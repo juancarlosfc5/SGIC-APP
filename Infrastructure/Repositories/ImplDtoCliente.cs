@@ -41,9 +41,9 @@ namespace SGIC_APP.Infrastructure.Repositories
                                 Nombre = reader["nombre"]?.ToString() ?? string.Empty,
                                 Apellidos = reader["apellidos"]?.ToString() ?? string.Empty,
                                 Email = reader["email"]?.ToString() ?? string.Empty,
-                                TipoDocId = Convert.ToInt32(reader["tipo_doc_id"]),
-                                TipoTerceroId = Convert.ToInt32(reader["tipo_tercero_id"]),
-                                CiudadId = Convert.ToInt32(reader["ciudad_id"])
+                                TipoDocId = reader["tipo_doc_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_doc_id"]) : 0,
+                                TipoTerceroId = reader["tipo_tercero_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_tercero_id"]) : 0,
+                                CiudadId = reader["ciudad_id"] != DBNull.Value ? Convert.ToInt32(reader["ciudad_id"]) : 0
                             };
 
                             if (reader["fecha_nac"] != DBNull.Value)
@@ -85,9 +85,9 @@ namespace SGIC_APP.Infrastructure.Repositories
                                 Nombre = reader["nombre"]?.ToString() ?? string.Empty,
                                 Apellidos = reader["apellidos"]?.ToString() ?? string.Empty,
                                 Email = reader["email"]?.ToString() ?? string.Empty,
-                                TipoDocId = Convert.ToInt32(reader["tipo_doc_id"]),
-                                TipoTerceroId = Convert.ToInt32(reader["tipo_tercero_id"]),
-                                CiudadId = Convert.ToInt32(reader["ciudad_id"])
+                                TipoDocId = reader["tipo_doc_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_doc_id"]) : 0,
+                                TipoTerceroId = reader["tipo_tercero_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_tercero_id"]) : 0,
+                                CiudadId = reader["ciudad_id"] != DBNull.Value ? Convert.ToInt32(reader["ciudad_id"]) : 0
                             };
 
                             if (reader["fecha_nac"] != DBNull.Value)
@@ -109,56 +109,28 @@ namespace SGIC_APP.Infrastructure.Repositories
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
-                using (var transaction = connection.BeginTransaction())
+                using (var command = new MySqlCommand())
                 {
+                    command.Connection = connection;
+                    command.CommandText = "sp_crear_cliente";
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@p_tercero_id", cliente.TerceroId);
+                    command.Parameters.AddWithValue("@p_nombre", cliente.Nombre);
+                    command.Parameters.AddWithValue("@p_apellidos", cliente.Apellidos);
+                    command.Parameters.AddWithValue("@p_email", cliente.Email);
+                    command.Parameters.AddWithValue("@p_tipo_doc_id", cliente.TipoDocId);
+                    command.Parameters.AddWithValue("@p_tipo_tercero_id", cliente.TipoTerceroId);
+                    command.Parameters.AddWithValue("@p_ciudad_id", cliente.CiudadId);
+                    command.Parameters.AddWithValue("@p_fecha_nac", cliente.FechaNacimiento ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@p_fecha_ultima_compra", cliente.FechaUltimaCompra ?? (object)DBNull.Value);
+
                     try
                     {
-                        using (var command = new MySqlCommand())
-                        {
-                            command.Connection = connection;
-                            command.Transaction = transaction;
-
-                            // Insertar en tercero
-                            command.CommandText = @"
-                                INSERT INTO tercero (
-                                    id, nombre, apellidos, email, 
-                                    tipo_doc_id, tipo_tercero_id, ciudad_id
-                                ) VALUES (
-                                    @id, @nombre, @apellidos, @email,
-                                    @tipo_doc_id, @tipo_tercero_id, @ciudad_id
-                                )";
-
-                            command.Parameters.AddWithValue("@id", cliente.TerceroId);
-                            command.Parameters.AddWithValue("@nombre", cliente.Nombre);
-                            command.Parameters.AddWithValue("@apellidos", cliente.Apellidos);
-                            command.Parameters.AddWithValue("@email", cliente.Email);
-                            command.Parameters.AddWithValue("@tipo_doc_id", cliente.TipoDocId);
-                            command.Parameters.AddWithValue("@tipo_tercero_id", cliente.TipoTerceroId);
-                            command.Parameters.AddWithValue("@ciudad_id", cliente.CiudadId);
-
-                            command.ExecuteNonQuery();
-
-                            // Insertar en cliente
-                            command.Parameters.Clear();
-                            command.CommandText = @"
-                                INSERT INTO cliente (
-                                    tercero_id, fecha_nac, fecha_ultima_compra
-                                ) VALUES (
-                                    @tercero_id, @fecha_nac, @fecha_ultima_compra
-                                )";
-
-                            command.Parameters.AddWithValue("@tercero_id", cliente.TerceroId);
-                            command.Parameters.AddWithValue("@fecha_nac", cliente.FechaNacimiento ?? (object)DBNull.Value);
-                            command.Parameters.AddWithValue("@fecha_ultima_compra", cliente.FechaUltimaCompra ?? (object)DBNull.Value);
-
-                            command.ExecuteNonQuery();
-                        }
-
-                        transaction.Commit();
+                        command.ExecuteNonQuery();
                     }
-                    catch (Exception ex)
+                    catch (MySqlException ex)
                     {
-                        transaction.Rollback();
                         throw new Exception("Error al crear el cliente: " + ex.Message, ex);
                     }
                 }

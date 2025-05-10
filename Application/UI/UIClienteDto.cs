@@ -2,12 +2,19 @@ using System;
 using System.Linq;
 using SGIC_APP.Domain.Ports;
 using SGIC_APP.Domain.dto;
+using System.Collections.Generic;
 
 namespace SGIC_APP.Application.UI
 {
     public class UIClienteDto
     {
         private readonly IDtoCliente<ClienteDto> _clienteRepository;
+        private static readonly Dictionary<int, string> TiposDocumento = new Dictionary<int, string>
+        {
+            { 1, "Cédula de ciudadanía" },
+            { 2, "NIT" },
+            { 3, "Pasaporte" }
+        };
 
         public UIClienteDto(IDtoCliente<ClienteDto> clienteRepository)
         {
@@ -21,11 +28,10 @@ namespace SGIC_APP.Application.UI
                 Console.Clear();
                 Console.WriteLine("=== MENÚ DE CLIENTES ===");
                 Console.WriteLine("1. Ver todos los clientes");
-                Console.WriteLine("2. Buscar cliente por ID");
-                Console.WriteLine("3. Crear nuevo cliente");
-                Console.WriteLine("4. Actualizar cliente");
-                Console.WriteLine("5. Eliminar cliente");
-                Console.WriteLine("6. Volver al menú principal");
+                Console.WriteLine("2. Crear nuevo cliente");
+                Console.WriteLine("3. Actualizar cliente");
+                Console.WriteLine("4. Eliminar cliente");
+                Console.WriteLine("5. Volver al menú principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 if (!int.TryParse(Console.ReadLine(), out int opcion))
@@ -43,18 +49,15 @@ namespace SGIC_APP.Application.UI
                             MostrarTodosLosClientes();
                             break;
                         case 2:
-                            BuscarClientePorId();
-                            break;
-                        case 3:
                             CrearCliente();
                             break;
-                        case 4:
+                        case 3:
                             ActualizarCliente();
                             break;
-                        case 5:
+                        case 4:
                             EliminarCliente();
                             break;
-                        case 6:
+                        case 5:
                             return;
                         default:
                             Console.WriteLine("\nOpción inválida. Presione cualquier tecla para continuar...");
@@ -99,12 +102,12 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== BUSCAR CLIENTE ===\n");
             
-            Console.Write("Ingrese el ID del cliente: ");
+            Console.Write("Ingrese el TERCERO_ID del cliente: ");
             var id = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(id))
             {
-                Console.WriteLine("\nEl ID no puede estar vacío. Presione cualquier tecla para continuar...");
+                Console.WriteLine("\nEl TERCERO_ID no puede estar vacío. Presione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
@@ -129,6 +132,11 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== CREAR NUEVO CLIENTE ===\n");
 
+            Console.Write("TERCERO_ID: ");
+            var terceroId = Console.ReadLine() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(terceroId))
+                throw new Exception("El TERCERO_ID es requerido.");
+
             Console.Write("Nombre: ");
             var nombre = Console.ReadLine() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(nombre))
@@ -144,30 +152,24 @@ namespace SGIC_APP.Application.UI
             if (string.IsNullOrWhiteSpace(email))
                 throw new Exception("El email es requerido.");
 
-            var cliente = new ClienteDto
+            Console.WriteLine("Tipos de documento disponibles:");
+            foreach (var kvp in TiposDocumento)
             {
-                TerceroId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                Nombre = nombre,
-                Apellidos = apellidos,
-                Email = email,
-                TipoTerceroId = 1, // Tipo Cliente
-                Activo = true
-            };
-
-            Console.Write("Teléfono: ");
-            cliente.Telefono = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(cliente.Telefono))
-                throw new Exception("El teléfono es requerido.");
-
-            Console.Write("Tipo de Teléfono (Celular/Fijo): ");
-            cliente.TipoTelefono = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(cliente.TipoTelefono))
-                throw new Exception("El tipo de teléfono es requerido.");
-
+                Console.WriteLine($"{kvp.Key} - {kvp.Value}");
+            }
             Console.Write("Tipo de Documento (ID): ");
             if (!int.TryParse(Console.ReadLine(), out int tipoDocId))
                 throw new Exception("El tipo de documento debe ser un número entero.");
-            cliente.TipoDocId = tipoDocId;
+
+            var cliente = new ClienteDto
+            {
+                TerceroId = terceroId,
+                Nombre = nombre,
+                Apellidos = apellidos,
+                Email = email,
+                TipoDocId = tipoDocId,
+                TipoTerceroId = 1 // Tipo Cliente
+            };
 
             Console.Write("Ciudad (ID): ");
             if (!int.TryParse(Console.ReadLine(), out int ciudadId))
@@ -183,6 +185,15 @@ namespace SGIC_APP.Application.UI
                 cliente.FechaNacimiento = fechaNac;
             }
 
+            Console.Write("Fecha de Última Compra (dd/MM/yyyy): ");
+            var fechaUltimaCompraStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(fechaUltimaCompraStr))
+            {
+                if (!DateTime.TryParse(fechaUltimaCompraStr, out DateTime fechaUltimaCompra))
+                    throw new Exception("El formato de fecha debe ser dd/MM/yyyy.");
+                cliente.FechaUltimaCompra = fechaUltimaCompra;
+            }
+
             _clienteRepository.Crear(cliente);
             Console.WriteLine("\nCliente creado exitosamente.");
             Console.WriteLine("Presione cualquier tecla para continuar...");
@@ -194,12 +205,12 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR CLIENTE ===\n");
 
-            Console.Write("Ingrese el ID del cliente a actualizar: ");
+            Console.Write("Ingrese el TERCERO_ID del cliente a actualizar: ");
             var id = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(id))
             {
-                Console.WriteLine("\nEl ID no puede estar vacío. Presione cualquier tecla para continuar...");
+                Console.WriteLine("\nEl TERCERO_ID no puede estar vacío. Presione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
@@ -230,25 +241,6 @@ namespace SGIC_APP.Application.UI
             if (!string.IsNullOrWhiteSpace(email))
                 cliente.Email = email;
 
-            Console.Write($"Teléfono ({cliente.Telefono}): ");
-            var telefono = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(telefono))
-                cliente.Telefono = telefono;
-
-            Console.Write($"Tipo de Teléfono ({cliente.TipoTelefono}): ");
-            var tipoTelefono = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(tipoTelefono))
-                cliente.TipoTelefono = tipoTelefono;
-
-            Console.Write($"Tipo de Documento ({cliente.TipoDocId}): ");
-            var tipoDocIdStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(tipoDocIdStr))
-            {
-                if (!int.TryParse(tipoDocIdStr, out int tipoDocId))
-                    throw new Exception("El tipo de documento debe ser un número entero.");
-                cliente.TipoDocId = tipoDocId;
-            }
-
             Console.Write($"Ciudad ({cliente.CiudadId}): ");
             var ciudadIdStr = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(ciudadIdStr))
@@ -256,6 +248,20 @@ namespace SGIC_APP.Application.UI
                 if (!int.TryParse(ciudadIdStr, out int ciudadId))
                     throw new Exception("La ciudad debe ser un número entero.");
                 cliente.CiudadId = ciudadId;
+            }
+
+            Console.WriteLine("Tipos de documento disponibles:");
+            foreach (var kvp in TiposDocumento)
+            {
+                Console.WriteLine($"{kvp.Key} - {kvp.Value}");
+            }
+            Console.Write($"Tipo de Documento (ID) actual: {cliente.TipoDocId}: ");
+            var tipoDocIdStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(tipoDocIdStr))
+            {
+                if (!int.TryParse(tipoDocIdStr, out int tipoDocId))
+                    throw new Exception("El tipo de documento debe ser un número entero.");
+                cliente.TipoDocId = tipoDocId;
             }
 
             Console.Write($"Fecha de Nacimiento ({cliente.FechaNacimiento?.ToShortDateString() ?? "No especificada"}): ");
@@ -278,12 +284,12 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ELIMINAR CLIENTE ===\n");
 
-            Console.Write("Ingrese el ID del cliente a eliminar: ");
+            Console.Write("Ingrese el TERCERO_ID del cliente a eliminar: ");
             var id = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(id))
             {
-                Console.WriteLine("\nEl ID no puede estar vacío. Presione cualquier tecla para continuar...");
+                Console.WriteLine("\nEl TERCERO_ID no puede estar vacío. Presione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
@@ -317,16 +323,16 @@ namespace SGIC_APP.Application.UI
 
         private void MostrarCliente(ClienteDto cliente)
         {
-            Console.WriteLine($"ID: {cliente.TerceroId}");
-            Console.WriteLine($"Nombre: {cliente.Nombre} {cliente.Apellidos}");
+            string tipoDocDesc = TiposDocumento.ContainsKey(cliente.TipoDocId)
+                ? TiposDocumento[cliente.TipoDocId]
+                : "Desconocido";
+            Console.WriteLine($"TERCERO_ID: {cliente.TerceroId}");
+            Console.WriteLine($"Nombre: {cliente.NombreCompleto}");
             Console.WriteLine($"Email: {cliente.Email}");
-            Console.WriteLine($"Tipo de Documento ID: {cliente.TipoDocId}");
-            Console.WriteLine($"Tipo de Tercero ID: {cliente.TipoTerceroId}");
-            Console.WriteLine($"Ciudad ID: {cliente.CiudadId}");
+            Console.WriteLine($"Ciudad: {cliente.CiudadId}");
+            Console.WriteLine($"Tipo de Documento: {tipoDocDesc}");
             Console.WriteLine($"Fecha de Nacimiento: {cliente.FechaNacimiento?.ToShortDateString() ?? "No especificada"}");
             Console.WriteLine($"Última Compra: {cliente.FechaUltimaCompra?.ToShortDateString() ?? "No registrada"}");
-            Console.WriteLine($"Estado: {(cliente.Activo ? "Activo" : "Inactivo")}");
-            Console.WriteLine($"Fecha de Registro: {cliente.FechaRegistro.ToShortDateString()}");
         }
     }
 }

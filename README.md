@@ -366,3 +366,4 @@ INSERT INTO plan_producto (plan_id, producto_id) VALUES
 (1, 1), 
 (2, 2), 
 (3, 3);
+

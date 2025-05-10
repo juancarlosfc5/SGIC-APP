@@ -26,12 +26,9 @@ namespace SGIC_APP.Application.Services
 
             foreach (var cliente in clientes)
             {
-                Console.WriteLine($"ID: {cliente.TerceroId}");
+                Console.WriteLine($"TERCERO_ID: {cliente.TerceroId}");
                 Console.WriteLine($"Nombre: {cliente.NombreCompleto}");
                 Console.WriteLine($"Email: {cliente.Email}");
-                Console.WriteLine($"Teléfono: {cliente.Telefono}");
-                Console.WriteLine($"Tipo de Teléfono: {cliente.TipoTelefono}");
-                Console.WriteLine($"Tipo de Documento: {cliente.TipoDocId}");
                 Console.WriteLine($"Ciudad: {cliente.CiudadId}");
                 Console.WriteLine($"Fecha de Nacimiento: {cliente.FechaNacimiento?.ToShortDateString() ?? "No especificada"}");
                 Console.WriteLine($"Última Compra: {cliente.FechaUltimaCompra?.ToShortDateString() ?? "No registrada"}");

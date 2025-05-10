@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SGIC_APP.Domain.Ports;
 using SGIC_APP.Domain.dto;
+using System.Linq;
 
 namespace SGIC_APP.Application.UI
 {
@@ -21,11 +22,10 @@ namespace SGIC_APP.Application.UI
                 Console.Clear();
                 Console.WriteLine("=== GESTIÓN DE EMPLEADOS ===");
                 Console.WriteLine("1. Listar Empleados");
-                Console.WriteLine("2. Buscar Empleado");
-                Console.WriteLine("3. Crear Empleado");
-                Console.WriteLine("4. Actualizar Empleado");
-                Console.WriteLine("5. Eliminar Empleado");
-                Console.WriteLine("0. Volver al Menú Principal");
+                Console.WriteLine("2. Crear Empleado");
+                Console.WriteLine("3. Actualizar Empleado");
+                Console.WriteLine("4. Eliminar Empleado");
+                Console.WriteLine("5. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -38,18 +38,15 @@ namespace SGIC_APP.Application.UI
                             ListarEmpleados();
                             break;
                         case "2":
-                            BuscarEmpleado();
-                            break;
-                        case "3":
                             CrearEmpleado();
                             break;
-                        case "4":
+                        case "3":
                             ActualizarEmpleado();
                             break;
-                        case "5":
+                        case "4":
                             EliminarEmpleado();
                             break;
-                        case "0":
+                        case "5":
                             return;
                         default:
                             Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -72,18 +69,32 @@ namespace SGIC_APP.Application.UI
             Console.WriteLine("=== LISTADO DE EMPLEADOS ===\n");
 
             var empleados = _empleadoRepository.ObtenerTodos();
-            foreach (var empleado in empleados)
+            if (!empleados.Any())
             {
-                Console.WriteLine($"ID: {empleado.TerceroId}");
-                Console.WriteLine($"Nombre: {empleado.Nombre} {empleado.Apellidos}");
-                Console.WriteLine($"Email: {empleado.Email}");
-                Console.WriteLine($"Teléfono: {empleado.Telefono}");
-                Console.WriteLine($"Tipo de Teléfono: {empleado.TipoTelefono}");
-                Console.WriteLine($"Salario Base: ${empleado.SalarioBase:N2}");
-                Console.WriteLine($"Fecha de Ingreso: {empleado.FechaIngreso:dd/MM/yyyy}");
-                Console.WriteLine("------------------------");
+                Console.WriteLine("No hay empleados registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
             }
 
+            foreach (var empleado in empleados)
+            {
+                Console.WriteLine("=== INFORMACIÓN DEL EMPLEADO ===");
+                Console.WriteLine($"ID: {empleado.TerceroId}");
+                Console.WriteLine($"Nombre Completo: {empleado.NombreCompleto}");
+                Console.WriteLine($"Email: {empleado.Email}");
+                Console.WriteLine($"Teléfono: {empleado.Telefono} ({empleado.TipoTelefono})");
+                Console.WriteLine($"Salario Base: ${empleado.SalarioBase:N2}");
+                Console.WriteLine($"Fecha de Ingreso: {empleado.FechaIngreso:dd/MM/yyyy}");
+                if (empleado.EpsId.HasValue)
+                    Console.WriteLine($"EPS ID: {empleado.EpsId}");
+                if (empleado.ArlId.HasValue)
+                    Console.WriteLine($"ARL ID: {empleado.ArlId}");
+                Console.WriteLine("Estado: " + (empleado.Activo ? "Activo" : "Inactivo"));
+                Console.WriteLine("------------------------\n");
+            }
+
+            Console.WriteLine($"Total de empleados: {empleados.Count()}");
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
