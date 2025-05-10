@@ -80,17 +80,15 @@ namespace SGIC_APP.Application.UI
             foreach (var empleado in empleados)
             {
                 Console.WriteLine("=== INFORMACIÓN DEL EMPLEADO ===");
-                Console.WriteLine($"ID: {empleado.TerceroId}");
+                Console.WriteLine($"TerceroId: {empleado.TerceroId}");
                 Console.WriteLine($"Nombre Completo: {empleado.NombreCompleto}");
                 Console.WriteLine($"Email: {empleado.Email}");
-                Console.WriteLine($"Teléfono: {empleado.Telefono} ({empleado.TipoTelefono})");
                 Console.WriteLine($"Salario Base: ${empleado.SalarioBase:N2}");
                 Console.WriteLine($"Fecha de Ingreso: {empleado.FechaIngreso:dd/MM/yyyy}");
                 if (empleado.EpsId.HasValue)
                     Console.WriteLine($"EPS ID: {empleado.EpsId}");
                 if (empleado.ArlId.HasValue)
                     Console.WriteLine($"ARL ID: {empleado.ArlId}");
-                Console.WriteLine("Estado: " + (empleado.Activo ? "Activo" : "Inactivo"));
                 Console.WriteLine("------------------------\n");
             }
 
@@ -118,11 +116,9 @@ namespace SGIC_APP.Application.UI
             if (empleado != null)
             {
                 Console.WriteLine("\nInformación del Empleado:");
-                Console.WriteLine($"ID: {empleado.TerceroId}");
+                Console.WriteLine($"TerceroId: {empleado.TerceroId}");
                 Console.WriteLine($"Nombre: {empleado.Nombre} {empleado.Apellidos}");
                 Console.WriteLine($"Email: {empleado.Email}");
-                Console.WriteLine($"Teléfono: {empleado.Telefono}");
-                Console.WriteLine($"Tipo de Teléfono: {empleado.TipoTelefono}");
                 Console.WriteLine($"Salario Base: ${empleado.SalarioBase:N2}");
                 Console.WriteLine($"Fecha de Ingreso: {empleado.FechaIngreso:dd/MM/yyyy}");
             }
@@ -140,59 +136,60 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== CREAR EMPLEADO ===\n");
 
-            Console.Write("Nombre: ");
-            var nombre = Console.ReadLine() ?? throw new ArgumentException("El nombre es requerido");
-
-            Console.Write("Apellidos: ");
-            var apellidos = Console.ReadLine() ?? throw new ArgumentException("Los apellidos son requeridos");
-
-            Console.Write("Email: ");
-            var email = Console.ReadLine() ?? throw new ArgumentException("El email es requerido");
-
-            Console.Write("Teléfono: ");
-            var telefono = Console.ReadLine() ?? throw new ArgumentException("El teléfono es requerido");
-
-            Console.Write("Tipo de Teléfono: ");
-            var tipoTelefono = Console.ReadLine() ?? throw new ArgumentException("El tipo de teléfono es requerido");
-
-            Console.Write("Tipo de Documento ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int tipoDocId))
-                throw new ArgumentException("Tipo de documento inválido");
-
-            Console.Write("Tipo de Tercero ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int tipoTerceroId))
-                throw new ArgumentException("Tipo de tercero inválido");
-
-            Console.Write("Ciudad ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int ciudadId))
-                throw new ArgumentException("Ciudad inválida");
-
-            Console.Write("Salario Base: ");
-            if (!double.TryParse(Console.ReadLine(), out double salarioBase))
-                throw new ArgumentException("Salario inválido");
-
-            Console.Write("Fecha de Ingreso (dd/MM/yyyy): ");
-            if (!DateTime.TryParse(Console.ReadLine(), out DateTime fechaIngreso))
-                throw new ArgumentException("Fecha inválida");
-
-            var empleado = new EmpleadoDto
+            try
             {
-                TerceroId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                Nombre = nombre,
-                Apellidos = apellidos,
-                Email = email,
-                Telefono = telefono,
-                TipoTelefono = tipoTelefono,
-                TipoDocId = tipoDocId,
-                TipoTerceroId = tipoTerceroId,
-                CiudadId = ciudadId,
-                SalarioBase = salarioBase,
-                FechaIngreso = fechaIngreso
-            };
+                Console.Write("TerceroId: ");
+                var terceroId = Console.ReadLine() ?? throw new ArgumentException("El TerceroId es requerido");
 
-            _empleadoRepository.Crear(empleado);
-            Console.WriteLine("\nEmpleado creado exitosamente.");
-            Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.Write("Nombre Completo: ");
+                var nombreCompleto = Console.ReadLine() ?? throw new ArgumentException("El nombre completo es requerido");
+                var partesNombre = nombreCompleto.Split(' ', 2);
+                var nombre = partesNombre[0];
+                var apellidos = partesNombre.Length > 1 ? partesNombre[1] : "";
+
+                Console.Write("Email: ");
+                var email = Console.ReadLine() ?? throw new ArgumentException("El email es requerido");
+
+                Console.Write("Salario Base: ");
+                if (!double.TryParse(Console.ReadLine(), out double salarioBase))
+                    throw new ArgumentException("Salario inválido");
+
+                Console.Write("Fecha de Ingreso (dd/MM/yyyy): ");
+                if (!DateTime.TryParse(Console.ReadLine(), out DateTime fechaIngreso))
+                    throw new ArgumentException("Fecha inválida");
+
+                Console.Write("EPS ID: ");
+                if (!int.TryParse(Console.ReadLine(), out int epsId))
+                    throw new ArgumentException("EPS ID inválido");
+
+                Console.Write("ARL ID: ");
+                if (!int.TryParse(Console.ReadLine(), out int arlId))
+                    throw new ArgumentException("ARL ID inválido");
+
+                var empleado = new EmpleadoDto
+                {
+                    TerceroId = terceroId,
+                    Nombre = nombre,
+                    Apellidos = apellidos,
+                    Email = email,
+                    TipoDocId = 1, // Valor por defecto
+                    TipoTerceroId = 2, // 2 para empleados
+                    CiudadId = 1, // Valor por defecto
+                    SalarioBase = salarioBase,
+                    FechaIngreso = fechaIngreso,
+                    EpsId = epsId,
+                    ArlId = arlId
+                };
+
+                _empleadoRepository.Crear(empleado);
+                Console.WriteLine("\nEmpleado creado exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
 
@@ -214,40 +211,56 @@ namespace SGIC_APP.Application.UI
             var empleado = _empleadoRepository.ObtenerPorId(id);
             if (empleado != null)
             {
-                Console.Write("Nombre: ");
-                empleado.Nombre = Console.ReadLine() ?? empleado.Nombre;
+                Console.WriteLine("\nDatos actuales del empleado:");
+                Console.WriteLine($"TerceroId: {empleado.TerceroId}");
+                Console.WriteLine($"Nombre: {empleado.Nombre}");
+                Console.WriteLine($"Apellidos: {empleado.Apellidos}");
+                Console.WriteLine($"Email: {empleado.Email}");
+                Console.WriteLine($"Salario Base: ${empleado.SalarioBase:N2}");
+                Console.WriteLine($"Fecha de Ingreso: {empleado.FechaIngreso:dd/MM/yyyy}");
+                Console.WriteLine($"EPS ID: {empleado.EpsId}");
+                Console.WriteLine($"ARL ID: {empleado.ArlId}");
+                Console.WriteLine("\nIngrese los nuevos valores (deje en blanco para mantener el valor actual):");
 
-                Console.Write("Apellidos: ");
-                empleado.Apellidos = Console.ReadLine() ?? empleado.Apellidos;
+                Console.Write($"TerceroId ({empleado.TerceroId}): ");
+                var nuevoTerceroId = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevoTerceroId))
+                    empleado.TerceroId = nuevoTerceroId;
 
-                Console.Write("Email: ");
-                empleado.Email = Console.ReadLine() ?? empleado.Email;
+                Console.Write($"Nombre ({empleado.Nombre}): ");
+                var nuevoNombre = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevoNombre))
+                    empleado.Nombre = nuevoNombre;
 
-                Console.Write("Teléfono: ");
-                empleado.Telefono = Console.ReadLine() ?? empleado.Telefono;
+                Console.Write($"Apellidos ({empleado.Apellidos}): ");
+                var nuevosApellidos = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevosApellidos))
+                    empleado.Apellidos = nuevosApellidos;
 
-                Console.Write("Tipo de Teléfono: ");
-                empleado.TipoTelefono = Console.ReadLine() ?? empleado.TipoTelefono;
+                Console.Write($"Email ({empleado.Email}): ");
+                var nuevoEmail = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevoEmail))
+                    empleado.Email = nuevoEmail;
 
-                Console.Write("Tipo de Documento ID: ");
-                if (int.TryParse(Console.ReadLine(), out int tipoDocId))
-                    empleado.TipoDocId = tipoDocId;
-
-                Console.Write("Tipo de Tercero ID: ");
-                if (int.TryParse(Console.ReadLine(), out int tipoTerceroId))
-                    empleado.TipoTerceroId = tipoTerceroId;
-
-                Console.Write("Ciudad ID: ");
-                if (int.TryParse(Console.ReadLine(), out int ciudadId))
-                    empleado.CiudadId = ciudadId;
-
-                Console.Write("Salario Base: ");
-                if (double.TryParse(Console.ReadLine(), out double salarioBase))
+                Console.Write($"Salario Base (${empleado.SalarioBase:N2}): ");
+                var nuevoSalario = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevoSalario) && double.TryParse(nuevoSalario, out double salarioBase))
                     empleado.SalarioBase = salarioBase;
 
-                Console.Write("Fecha de Ingreso (dd/MM/yyyy): ");
-                if (DateTime.TryParse(Console.ReadLine(), out DateTime fechaIngreso))
+                Console.Write($"Fecha de Ingreso ({empleado.FechaIngreso:dd/MM/yyyy}): ");
+                var nuevaFecha = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevaFecha) && DateTime.TryParse(nuevaFecha, out DateTime fechaIngreso))
                     empleado.FechaIngreso = fechaIngreso;
+
+                Console.Write($"EPS ID ({empleado.EpsId}): ");
+                var nuevoEpsId = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevoEpsId) && int.TryParse(nuevoEpsId, out int epsId))
+                    empleado.EpsId = epsId;
+
+                Console.Write($"ARL ID ({empleado.ArlId}): ");
+                var nuevoArlId = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nuevoArlId) && int.TryParse(nuevoArlId, out int arlId))
+                    empleado.ArlId = arlId;
 
                 _empleadoRepository.Actualizar(empleado);
                 Console.WriteLine("\nEmpleado actualizado exitosamente.");
@@ -265,12 +278,12 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR EMPLEADO ===\n");
-            Console.Write("Ingrese el ID del empleado a eliminar: ");
+            Console.Write("Ingrese el TerceroId del empleado a eliminar: ");
 
             var id = Console.ReadLine();
             if (string.IsNullOrEmpty(id))
             {
-                Console.WriteLine("\nID inválido.");
+                Console.WriteLine("\nTerceroId inválido.");
                 Console.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
@@ -279,8 +292,25 @@ namespace SGIC_APP.Application.UI
             var empleado = _empleadoRepository.ObtenerPorId(id);
             if (empleado != null)
             {
-                Console.WriteLine($"\n¿Está seguro de eliminar al empleado {empleado.Nombre} {empleado.Apellidos}? (S/N)");
+                Console.WriteLine("\n=== INFORMACIÓN DEL EMPLEADO A ELIMINAR ===");
+                Console.WriteLine($"TerceroId: {empleado.TerceroId}");
+                Console.WriteLine($"Nombre Completo: {empleado.NombreCompleto}");
+                Console.WriteLine($"Email: {empleado.Email}");
+                Console.WriteLine($"Salario Base: ${empleado.SalarioBase:N2}");
+                Console.WriteLine($"Fecha de Ingreso: {empleado.FechaIngreso:dd/MM/yyyy}");
+                if (empleado.EpsId.HasValue)
+                    Console.WriteLine($"EPS ID: {empleado.EpsId}");
+                if (empleado.ArlId.HasValue)
+                    Console.WriteLine($"ARL ID: {empleado.ArlId}");
+                Console.WriteLine("\n¿Está seguro que desea eliminar este empleado? (S/N)");
+                
                 var confirmacion = Console.ReadLine()?.ToUpper();
+                while (confirmacion != "S" && confirmacion != "N")
+                {
+                    Console.WriteLine("\nPor favor, ingrese 'S' para confirmar o 'N' para cancelar:");
+                    confirmacion = Console.ReadLine()?.ToUpper();
+                }
+
                 if (confirmacion == "S")
                 {
                     _empleadoRepository.Eliminar(id);
@@ -293,7 +323,7 @@ namespace SGIC_APP.Application.UI
             }
             else
             {
-                Console.WriteLine("\nNo se encontró el empleado.");
+                Console.WriteLine("\nNo se encontró el empleado con el TerceroId especificado.");
             }
 
             Console.WriteLine("\nPresione cualquier tecla para continuar...");

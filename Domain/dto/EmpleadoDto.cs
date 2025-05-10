@@ -9,8 +9,6 @@ namespace SGIC_APP.Domain.dto
         public required string Nombre { get; set; }
         public required string Apellidos { get; set; }
         public required string Email { get; set; }
-        public required string Telefono { get; set; }
-        public required string TipoTelefono { get; set; }
         public int TipoDocId { get; set; }
         public int TipoTerceroId { get; set; }
         public int CiudadId { get; set; }

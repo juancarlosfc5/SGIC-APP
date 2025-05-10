@@ -28,7 +28,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                     command.CommandText = @"
                         SELECT t.*, c.fecha_nac, c.fecha_ultima_compra
                         FROM tercero t
-                        LEFT JOIN cliente c ON t.id = c.tercero_id
+                        INNER JOIN cliente c ON t.id = c.tercero_id
                         ORDER BY t.id";
 
                     using (var reader = command.ExecuteReader())
@@ -104,8 +104,33 @@ namespace SGIC_APP.Infrastructure.Repositories
             return null;
         }
 
+        private bool ExisteTerceroId(string terceroId)
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new MySqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandText = @"
+                        SELECT COUNT(*) 
+                        FROM tercero 
+                        WHERE id = @id";
+                    command.Parameters.AddWithValue("@id", terceroId);
+
+                    var count = Convert.ToInt32(command.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+        }
+
         public void Crear(ClienteDto cliente)
         {
+            if (ExisteTerceroId(cliente.TerceroId))
+            {
+                throw new Exception($"El TerceroId '{cliente.TerceroId}' ya está registrado en el sistema. Por favor, utilice otro ID.");
+            }
+
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -212,14 +237,28 @@ namespace SGIC_APP.Infrastructure.Repositories
                             command.Connection = connection;
                             command.Transaction = transaction;
 
+                            // Verificar si existe en la tabla cliente
+                            command.CommandText = "SELECT COUNT(*) FROM cliente WHERE tercero_id = @id";
+                            command.Parameters.AddWithValue("@id", id);
+                            int count = Convert.ToInt32(command.ExecuteScalar());
+
+                            if (count == 0)
+                            {
+                                throw new Exception("El ID proporcionado no corresponde a un cliente registrado.");
+                            }
+
                             // Eliminar de cliente
+                            command.Parameters.Clear();
                             command.CommandText = "DELETE FROM cliente WHERE tercero_id = @id";
                             command.Parameters.AddWithValue("@id", id);
                             command.ExecuteNonQuery();
 
-                            // Eliminar de tercero
+                            // Eliminar de tercero solo si no está siendo usado por empleado
                             command.Parameters.Clear();
-                            command.CommandText = "DELETE FROM tercero WHERE id = @id";
+                            command.CommandText = @"
+                                DELETE FROM tercero 
+                                WHERE id = @id 
+                                AND NOT EXISTS (SELECT 1 FROM empleado WHERE tercero_id = @id)";
                             command.Parameters.AddWithValue("@id", id);
                             command.ExecuteNonQuery();
                         }

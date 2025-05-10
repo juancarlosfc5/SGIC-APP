@@ -20,61 +20,35 @@ namespace SGIC_APP.Application.UI
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("=== GESTIÓN DE PRODUCTOS ===");
+                Console.WriteLine("=== MENÚ DE PRODUCTOS ===\n");
                 Console.WriteLine("1. Listar Productos");
-                Console.WriteLine("2. Buscar Producto");
-                Console.WriteLine("3. Crear Producto");
-                Console.WriteLine("4. Actualizar Producto");
-                Console.WriteLine("5. Eliminar Producto");
-                Console.WriteLine("6. Ver Productos por Categoría");
-                Console.WriteLine("7. Ver Productos por Proveedor");
-                Console.WriteLine("8. Ver Productos con Bajo Stock");
-                Console.WriteLine("0. Volver al Menú Principal");
+                Console.WriteLine("2. Agregar Producto");
+                Console.WriteLine("3. Actualizar Producto");
+                Console.WriteLine("4. Eliminar Producto");
+                Console.WriteLine("5. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
-
-                try
+                switch (opcion)
                 {
-                    switch (opcion)
-                    {
-                        case "1":
-                            ListarProductos();
-                            break;
-                        case "2":
-                            BuscarProducto();
-                            break;
-                        case "3":
-                            CrearProducto();
-                            break;
-                        case "4":
-                            ActualizarProducto();
-                            break;
-                        case "5":
-                            EliminarProducto();
-                            break;
-                        case "6":
-                            VerProductosPorCategoria();
-                            break;
-                        case "7":
-                            VerProductosPorProveedor();
-                            break;
-                        case "8":
-                            VerProductosBajoStock();
-                            break;
-                        case "0":
-                            return;
-                        default:
-                            Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
-                            Console.ReadKey();
-                            break;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"\nError: {ex.Message}");
-                    Console.WriteLine("Presione cualquier tecla para continuar...");
-                    Console.ReadKey();
+                    case "1":
+                        ListarProductos();
+                        break;
+                    case "2":
+                        CrearProducto();
+                        break;
+                    case "3":
+                        ActualizarProducto();
+                        break;
+                    case "4":
+                        EliminarProducto();
+                        break;
+                    case "5":
+                        return;
+                    default:
+                        Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
+                        Console.ReadKey();
+                        break;
                 }
             }
         }
@@ -98,58 +72,11 @@ namespace SGIC_APP.Application.UI
                     Console.WriteLine($"Stock: {producto.Stock}");
                     Console.WriteLine($"Stock Mínimo: {producto.StockMin}");
                     Console.WriteLine($"Stock Máximo: {producto.StockMax}");
-                    Console.WriteLine($"Precio de Compra: ${producto.PrecioCompra:F2}");
-                    Console.WriteLine($"Precio de Venta: ${producto.PrecioVenta:F2}");
+                    Console.WriteLine($"Fecha de Creación: {producto.CreatedAt:dd/MM/yyyy HH:mm:ss}");
+                    Console.WriteLine($"Última Actualización: {producto.UpdatedAt:dd/MM/yyyy HH:mm:ss}");
                     Console.WriteLine($"Código de Barras: {producto.Barcode}");
-                    Console.WriteLine($"Categoría ID: {producto.CategoriaId}");
-                    Console.WriteLine($"Proveedor ID: {producto.ProveedorId}");
-                    Console.WriteLine($"Descripción: {producto.Descripcion ?? "Sin descripción"}");
-                    Console.WriteLine($"Activo: {(producto.Activo ? "Sí" : "No")}");
-                    Console.WriteLine($"Fecha de Creación: {producto.CreatedAt}");
-                    Console.WriteLine($"Última Actualización: {producto.UpdatedAt}");
                     Console.WriteLine(new string('-', 50));
                 }
-            }
-
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
-        }
-
-        private void BuscarProducto()
-        {
-            Console.Clear();
-            Console.WriteLine("=== BUSCAR PRODUCTO ===\n");
-
-            Console.Write("Ingrese el ID del producto: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("\nID inválido. Presione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
-
-            var producto = _productoRepository.ObtenerPorId(id);
-            if (producto == null)
-            {
-                Console.WriteLine("\nProducto no encontrado.");
-            }
-            else
-            {
-                Console.WriteLine("\nInformación del Producto:");
-                Console.WriteLine($"ID: {producto.Id}");
-                Console.WriteLine($"Nombre: {producto.Nombre}");
-                Console.WriteLine($"Stock: {producto.Stock}");
-                Console.WriteLine($"Stock Mínimo: {producto.StockMin}");
-                Console.WriteLine($"Stock Máximo: {producto.StockMax}");
-                Console.WriteLine($"Precio de Compra: ${producto.PrecioCompra:F2}");
-                Console.WriteLine($"Precio de Venta: ${producto.PrecioVenta:F2}");
-                Console.WriteLine($"Código de Barras: {producto.Barcode}");
-                Console.WriteLine($"Categoría ID: {producto.CategoriaId}");
-                Console.WriteLine($"Proveedor ID: {producto.ProveedorId}");
-                Console.WriteLine($"Descripción: {producto.Descripcion ?? "Sin descripción"}");
-                Console.WriteLine($"Activo: {(producto.Activo ? "Sí" : "No")}");
-                Console.WriteLine($"Fecha de Creación: {producto.CreatedAt}");
-                Console.WriteLine($"Última Actualización: {producto.UpdatedAt}");
             }
 
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
@@ -159,60 +86,47 @@ namespace SGIC_APP.Application.UI
         private void CrearProducto()
         {
             Console.Clear();
-            Console.WriteLine("=== CREAR NUEVO PRODUCTO ===\n");
+            Console.WriteLine("=== AGREGAR PRODUCTO ===\n");
 
-            var producto = new Producto();
+            try
+            {
+                var producto = new Producto();
 
-            Console.Write("Nombre: ");
-            producto.Nombre = Console.ReadLine() ?? throw new ArgumentException("El nombre es requerido.");
+                Console.Write("Nombre del producto: ");
+                producto.Nombre = Console.ReadLine() ?? throw new ArgumentException("El nombre es requerido.");
 
-            Console.Write("Stock: ");
-            if (!int.TryParse(Console.ReadLine(), out int stock))
-                throw new ArgumentException("El stock debe ser un número válido.");
-            producto.Stock = stock;
+                Console.Write("Stock inicial: ");
+                if (!int.TryParse(Console.ReadLine(), out int stock))
+                    throw new ArgumentException("El stock debe ser un número válido.");
+                producto.Stock = stock;
 
-            Console.Write("Stock Mínimo: ");
-            if (!int.TryParse(Console.ReadLine(), out int stockMin))
-                throw new ArgumentException("El stock mínimo debe ser un número válido.");
-            producto.StockMin = stockMin;
+                Console.Write("Stock mínimo: ");
+                if (!int.TryParse(Console.ReadLine(), out int stockMin))
+                    throw new ArgumentException("El stock mínimo debe ser un número válido.");
+                producto.StockMin = stockMin;
 
-            Console.Write("Stock Máximo: ");
-            if (!int.TryParse(Console.ReadLine(), out int stockMax))
-                throw new ArgumentException("El stock máximo debe ser un número válido.");
-            producto.StockMax = stockMax;
+                Console.Write("Stock máximo: ");
+                if (!int.TryParse(Console.ReadLine(), out int stockMax))
+                    throw new ArgumentException("El stock máximo debe ser un número válido.");
+                producto.StockMax = stockMax;
 
-            Console.Write("Precio de Compra: ");
-            if (!double.TryParse(Console.ReadLine(), out double precioCompra))
-                throw new ArgumentException("El precio de compra debe ser un número válido.");
-            producto.PrecioCompra = precioCompra;
+                // Asignar fechas automáticamente
+                producto.CreatedAt = DateTime.Now;
+                producto.UpdatedAt = DateTime.Now;
 
-            Console.Write("Precio de Venta: ");
-            if (!double.TryParse(Console.ReadLine(), out double precioVenta))
-                throw new ArgumentException("El precio de venta debe ser un número válido.");
-            producto.PrecioVenta = precioVenta;
+                // Generar código de barras automáticamente
+                producto.Barcode = GenerarCodigoBarras();
 
-            Console.Write("Código de Barras: ");
-            producto.Barcode = Console.ReadLine() ?? throw new ArgumentException("El código de barras es requerido.");
+                _productoRepository.Crear(producto);
+                Console.WriteLine("\nProducto creado exitosamente.");
+                Console.WriteLine($"Código de barras generado: {producto.Barcode}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
 
-            Console.Write("ID de Categoría: ");
-            if (!int.TryParse(Console.ReadLine(), out int categoriaId))
-                throw new ArgumentException("El ID de categoría debe ser un número válido.");
-            producto.CategoriaId = categoriaId;
-
-            Console.Write("ID de Proveedor: ");
-            if (!int.TryParse(Console.ReadLine(), out int proveedorId))
-                throw new ArgumentException("El ID de proveedor debe ser un número válido.");
-            producto.ProveedorId = proveedorId;
-
-            Console.Write("Descripción (opcional): ");
-            producto.Descripcion = Console.ReadLine();
-
-            Console.Write("¿Activo? (S/N): ");
-            producto.Activo = Console.ReadLine()?.ToUpper() == "S";
-
-            _productoRepository.Crear(producto);
-            Console.WriteLine("\nProducto creado exitosamente.");
-            Console.WriteLine("Presione cualquier tecla para continuar...");
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
 
@@ -238,66 +152,42 @@ namespace SGIC_APP.Application.UI
                 return;
             }
 
-            Console.WriteLine("\nDeje en blanco los campos que no desee modificar.\n");
+            try
+            {
+                Console.WriteLine("\nDeje en blanco los campos que no desee modificar.\n");
 
-            Console.Write($"Nombre ({producto.Nombre}): ");
-            var nombre = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(nombre))
-                producto.Nombre = nombre;
+                Console.Write($"Nombre actual ({producto.Nombre}): ");
+                var nombre = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(nombre))
+                    producto.Nombre = nombre;
 
-            Console.Write($"Stock ({producto.Stock}): ");
-            var stockStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(stockStr) && int.TryParse(stockStr, out int stock))
-                producto.Stock = stock;
+                Console.Write($"Stock actual ({producto.Stock}): ");
+                var stockStr = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(stockStr) && int.TryParse(stockStr, out int stock))
+                    producto.Stock = stock;
 
-            Console.Write($"Stock Mínimo ({producto.StockMin}): ");
-            var stockMinStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(stockMinStr) && int.TryParse(stockMinStr, out int stockMin))
-                producto.StockMin = stockMin;
+                Console.Write($"Stock mínimo actual ({producto.StockMin}): ");
+                var stockMinStr = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(stockMinStr) && int.TryParse(stockMinStr, out int stockMin))
+                    producto.StockMin = stockMin;
 
-            Console.Write($"Stock Máximo ({producto.StockMax}): ");
-            var stockMaxStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(stockMaxStr) && int.TryParse(stockMaxStr, out int stockMax))
-                producto.StockMax = stockMax;
+                Console.Write($"Stock máximo actual ({producto.StockMax}): ");
+                var stockMaxStr = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(stockMaxStr) && int.TryParse(stockMaxStr, out int stockMax))
+                    producto.StockMax = stockMax;
 
-            Console.Write($"Precio de Compra ({producto.PrecioCompra}): ");
-            var precioCompraStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(precioCompraStr) && double.TryParse(precioCompraStr, out double precioCompra))
-                producto.PrecioCompra = precioCompra;
+                // Actualizar la fecha de actualización
+                producto.UpdatedAt = DateTime.Now;
 
-            Console.Write($"Precio de Venta ({producto.PrecioVenta}): ");
-            var precioVentaStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(precioVentaStr) && double.TryParse(precioVentaStr, out double precioVenta))
-                producto.PrecioVenta = precioVenta;
+                _productoRepository.Actualizar(producto);
+                Console.WriteLine("\nProducto actualizado exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
 
-            Console.Write($"Código de Barras ({producto.Barcode}): ");
-            var barcode = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(barcode))
-                producto.Barcode = barcode;
-
-            Console.Write($"ID de Categoría ({producto.CategoriaId}): ");
-            var categoriaIdStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(categoriaIdStr) && int.TryParse(categoriaIdStr, out int categoriaId))
-                producto.CategoriaId = categoriaId;
-
-            Console.Write($"ID de Proveedor ({producto.ProveedorId}): ");
-            var proveedorIdStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(proveedorIdStr) && int.TryParse(proveedorIdStr, out int proveedorId))
-                producto.ProveedorId = proveedorId;
-
-            Console.Write($"Descripción ({producto.Descripcion ?? "Sin descripción"}): ");
-            var descripcion = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(descripcion))
-                producto.Descripcion = descripcion;
-
-            Console.Write($"¿Activo? (S/N) ({(producto.Activo ? "S" : "N")}): ");
-            var activoStr = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(activoStr))
-                producto.Activo = activoStr.ToUpper() == "S";
-
-            _productoRepository.Actualizar(producto);
-            Console.WriteLine("\nProducto actualizado exitosamente.");
-            Console.WriteLine("Presione cualquier tecla para continuar...");
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
 
@@ -339,103 +229,27 @@ namespace SGIC_APP.Application.UI
             Console.ReadKey();
         }
 
-        private void VerProductosPorCategoria()
+        private string GenerarCodigoBarras()
         {
-            Console.Clear();
-            Console.WriteLine("=== PRODUCTOS POR CATEGORÍA ===\n");
-
-            Console.Write("Ingrese el ID de la categoría: ");
-            if (!int.TryParse(Console.ReadLine(), out int categoriaId))
+            // Generar un código de barras aleatorio de 13 dígitos
+            var random = new Random();
+            var codigo = "";
+            for (int i = 0; i < 12; i++)
             {
-                Console.WriteLine("\nID de categoría inválido. Presione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
+                codigo += random.Next(0, 10).ToString();
             }
 
-            var productos = _productoRepository.ObtenerPorCategoria(categoriaId);
-            if (!productos.Any())
+            // Calcular dígito verificador (algoritmo EAN-13)
+            int suma = 0;
+            for (int i = 0; i < 12; i++)
             {
-                Console.WriteLine("\nNo hay productos en esta categoría.");
+                int digito = int.Parse(codigo[i].ToString());
+                suma += (i % 2 == 0) ? digito : digito * 3;
             }
-            else
-            {
-                foreach (var producto in productos)
-                {
-                    Console.WriteLine($"ID: {producto.Id}");
-                    Console.WriteLine($"Nombre: {producto.Nombre}");
-                    Console.WriteLine($"Stock: {producto.Stock}");
-                    Console.WriteLine($"Precio de Venta: ${producto.PrecioVenta:F2}");
-                    Console.WriteLine($"Código de Barras: {producto.Barcode}");
-                    Console.WriteLine(new string('-', 50));
-                }
-            }
+            int digitoVerificador = (10 - (suma % 10)) % 10;
+            codigo += digitoVerificador.ToString();
 
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
-        }
-
-        private void VerProductosPorProveedor()
-        {
-            Console.Clear();
-            Console.WriteLine("=== PRODUCTOS POR PROVEEDOR ===\n");
-
-            Console.Write("Ingrese el ID del proveedor: ");
-            if (!int.TryParse(Console.ReadLine(), out int proveedorId))
-            {
-                Console.WriteLine("\nID de proveedor inválido. Presione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
-
-            var productos = _productoRepository.ObtenerPorProveedor(proveedorId);
-            if (!productos.Any())
-            {
-                Console.WriteLine("\nNo hay productos de este proveedor.");
-            }
-            else
-            {
-                foreach (var producto in productos)
-                {
-                    Console.WriteLine($"ID: {producto.Id}");
-                    Console.WriteLine($"Nombre: {producto.Nombre}");
-                    Console.WriteLine($"Stock: {producto.Stock}");
-                    Console.WriteLine($"Precio de Compra: ${producto.PrecioCompra:F2}");
-                    Console.WriteLine($"Precio de Venta: ${producto.PrecioVenta:F2}");
-                    Console.WriteLine($"Código de Barras: {producto.Barcode}");
-                    Console.WriteLine(new string('-', 50));
-                }
-            }
-
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
-        }
-
-        private void VerProductosBajoStock()
-        {
-            Console.Clear();
-            Console.WriteLine("=== PRODUCTOS CON BAJO STOCK ===\n");
-
-            var productos = _productoRepository.ObtenerProductosBajoStock();
-            if (!productos.Any())
-            {
-                Console.WriteLine("No hay productos con bajo stock.");
-            }
-            else
-            {
-                foreach (var producto in productos)
-                {
-                    Console.WriteLine($"ID: {producto.Id}");
-                    Console.WriteLine($"Nombre: {producto.Nombre}");
-                    Console.WriteLine($"Stock Actual: {producto.Stock}");
-                    Console.WriteLine($"Stock Mínimo: {producto.StockMin}");
-                    Console.WriteLine($"Stock Máximo: {producto.StockMax}");
-                    Console.WriteLine($"Código de Barras: {producto.Barcode}");
-                    Console.WriteLine(new string('-', 50));
-                }
-            }
-
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
+            return codigo;
         }
     }
 } 
