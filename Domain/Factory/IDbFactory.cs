@@ -14,5 +14,9 @@ namespace SGIC_APP.Domain.Factory
         IDtoEmpleado<EmpleadoDto> CrearEmpleadoRepository();
         IDtoProducto<Producto> CrearProductoRepository();
         IDtoProveedor<Proveedor> CrearProveedorRepository();
+        IDtoPais<Pais> CrearPaisRepository();
+        IDtoRegion<Region> CrearRegionRepository();
+        IDtoCiudad<Ciudad> CrearCiudadRepository();
+        IDtoEmpresa<Empresa> CrearEmpresaRepository();
     }
 } 

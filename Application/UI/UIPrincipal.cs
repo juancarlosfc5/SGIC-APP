@@ -12,6 +12,10 @@ namespace SGIC_APP.Application.UI
         private readonly UIEmpleadoDto _uiEmpleado;
         private readonly UIProductoDto _uiProducto;
         private readonly UIProveedorDto _uiProveedor;
+        private readonly UIPaisDto _uiPais;
+        private readonly UIRegionDto _uiRegion;
+        private readonly UICiudadDto _uiCiudad;
+        private readonly UIEmpresaDto _uiEmpresa;
 
         public UIPrincipal(IDbFactory dbFactory)
         {
@@ -20,6 +24,10 @@ namespace SGIC_APP.Application.UI
             _uiEmpleado = new UIEmpleadoDto(_dbFactory.CrearEmpleadoRepository());
             _uiProducto = new UIProductoDto(_dbFactory.CrearProductoRepository());
             _uiProveedor = new UIProveedorDto(_dbFactory.CrearProveedorRepository());
+            _uiPais = new UIPaisDto(_dbFactory.CrearPaisRepository());
+            _uiRegion = new UIRegionDto(_dbFactory.CrearRegionRepository(), _dbFactory.CrearPaisRepository());
+            _uiCiudad = new UICiudadDto(_dbFactory.CrearCiudadRepository(), _dbFactory.CrearRegionRepository());
+            _uiEmpresa = new UIEmpresaDto(_dbFactory.CrearEmpresaRepository(), _dbFactory.CrearCiudadRepository());
         }
 
         public void MostrarMenu()
@@ -32,6 +40,10 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Gestión de Empleados");
                 Console.WriteLine("3. Gestión de Productos");
                 Console.WriteLine("4. Gestión de Proveedores");
+                Console.WriteLine("5. Gestión de Países");
+                Console.WriteLine("6. Gestión de Regiones");
+                Console.WriteLine("7. Gestión de Ciudades");
+                Console.WriteLine("8. Gestión de Empresas");
                 Console.WriteLine("0. Salir");
                 Console.Write("\nSeleccione una opción: ");
 
@@ -52,6 +64,18 @@ namespace SGIC_APP.Application.UI
                             break;
                         case "4":
                             _uiProveedor.MostrarMenu();
+                            break;
+                        case "5":
+                            _uiPais.MostrarMenu();
+                            break;
+                        case "6":
+                            _uiRegion.MostrarMenu();
+                            break;
+                        case "7":
+                            _uiCiudad.MostrarMenu();
+                            break;
+                        case "8":
+                            _uiEmpresa.MostrarMenu();
                             break;
                         case "0":
                             return;
