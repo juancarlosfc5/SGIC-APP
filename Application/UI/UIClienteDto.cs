@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using SGIC_APP.Domain.Ports;
 using SGIC_APP.Domain.dto;
+using SGIC_APP.Domain.Entities;
 using System.Collections.Generic;
 
 namespace SGIC_APP.Application.UI

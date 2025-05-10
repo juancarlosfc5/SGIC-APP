@@ -25,7 +25,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Agregar Producto");
                 Console.WriteLine("3. Actualizar Producto");
                 Console.WriteLine("4. Eliminar Producto");
-                Console.WriteLine("5. Volver al Menú Principal");
+                Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -43,7 +43,7 @@ namespace SGIC_APP.Application.UI
                     case "4":
                         EliminarProducto();
                         break;
-                    case "5":
+                    case "0":
                         return;
                     default:
                         Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -72,8 +72,8 @@ namespace SGIC_APP.Application.UI
                     Console.WriteLine($"Stock: {producto.Stock}");
                     Console.WriteLine($"Stock Mínimo: {producto.StockMin}");
                     Console.WriteLine($"Stock Máximo: {producto.StockMax}");
-                    Console.WriteLine($"Fecha de Creación: {producto.CreatedAt:dd/MM/yyyy HH:mm:ss}");
-                    Console.WriteLine($"Última Actualización: {producto.UpdatedAt:dd/MM/yyyy HH:mm:ss}");
+                    Console.WriteLine($"Fecha de Creación: {producto.CreatedAt:yyyy-MM-dd HH:mm:ss}");
+                    Console.WriteLine($"Última Actualización: {producto.UpdatedAt:yyyy-MM-dd HH:mm:ss}");
                     Console.WriteLine($"Código de Barras: {producto.Barcode}");
                     Console.WriteLine(new string('-', 50));
                 }
@@ -134,6 +134,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR PRODUCTO ===\n");
+
+            var productos = _productoRepository.ObtenerTodos();
+            if (!productos.Any())
+            {
+                Console.WriteLine("No hay productos disponibles.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Listado de productos disponibles:");
+            foreach(var prod in productos)
+            {
+                Console.WriteLine($"ID: {prod.Id}  Nombre: {prod.Nombre}");
+            }
+            Console.WriteLine(new string('-', 50));
 
             Console.Write("Ingrese el ID del producto a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
@@ -196,6 +211,21 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ELIMINAR PRODUCTO ===\n");
 
+            var productos = _productoRepository.ObtenerTodos();
+            if (!productos.Any())
+            {
+                Console.WriteLine("No hay productos disponibles.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Listado de productos disponibles:");
+            foreach(var prod in productos)
+            {
+                Console.WriteLine($"ID: {prod.Id}  Nombre: {prod.Nombre}");
+            }
+            Console.WriteLine(new string('-', 50));
+
             Console.Write("Ingrese el ID del producto a eliminar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
@@ -213,16 +243,31 @@ namespace SGIC_APP.Application.UI
                 return;
             }
 
-            Console.WriteLine($"\n¿Está seguro que desea eliminar el producto '{producto.Nombre}'? (S/N)");
-            var confirmacion = Console.ReadLine()?.ToUpper();
-            if (confirmacion == "S")
+            try
             {
-                _productoRepository.Eliminar(id);
-                Console.WriteLine("\nProducto eliminado exitosamente.");
+                Console.WriteLine($"\n¿Está seguro que desea eliminar el producto '{producto.Nombre}'?");
+                Console.Write("Escriba 'SI' para confirmar o cualquier otra tecla para cancelar: ");
+                if (Console.ReadLine()?.ToUpper() == "SI")
+                {
+                    _productoRepository.Eliminar(id);
+                    Console.WriteLine("\nProducto eliminado exitosamente.");
+                }
+                else
+                {
+                    Console.WriteLine("\nOperación cancelada.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("\nOperación cancelada.");
+                if (ex.Message.Contains("detalle_compra"))
+                {
+                    Console.WriteLine("\nNo es posible eliminar este producto porque está relacionado con compras existentes.");
+                    Console.WriteLine("Para eliminar el producto, primero debe eliminar todas las compras asociadas.");
+                }
+                else
+                {
+                    Console.WriteLine($"\nError: {ex.Message}");
+                }
             }
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
