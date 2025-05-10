@@ -27,29 +27,21 @@ namespace SGIC_APP.Infrastructure.Repositories
                     using (var command = new MySqlCommand(@"
                         SELECT * FROM producto
                         ORDER BY id DESC", connection))
+                    using (var reader = command.ExecuteReader())
                     {
-                        using (var reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
+                            productos.Add(new Producto
                             {
-                                productos.Add(new Producto
-                                {
-                                    Id = reader.GetInt32("id"),
-                                    Nombre = reader.GetString("nombre"),
-                                    Stock = reader.GetInt32("stock"),
-                                    StockMin = reader.GetInt32("stock_min"),
-                                    StockMax = reader.GetInt32("stock_max"),
-                                    CreatedAt = reader.GetDateTime("created_at"),
-                                    UpdatedAt = reader.GetDateTime("updated_at"),
-                                    Barcode = reader.GetString("barcode"),
-                                    PrecioCompra = reader.GetDouble("precio_compra"),
-                                    PrecioVenta = reader.GetDouble("precio_venta"),
-                                    CategoriaId = reader.GetInt32("categoria_id"),
-                                    ProveedorId = reader.GetInt32("proveedor_id"),
-                                    Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString("descripcion"),
-                                    Activo = reader.GetBoolean("activo")
-                                });
-                            }
+                                Id = reader.GetInt32("id"),
+                                Nombre = reader.GetString("nombre"),
+                                Stock = reader.GetInt32("stock"),
+                                StockMin = reader.GetInt32("stock_min"),
+                                StockMax = reader.GetInt32("stock_max"),
+                                CreatedAt = reader.GetDateTime("created_at"),
+                                UpdatedAt = reader.GetDateTime("updated_at"),
+                                Barcode = reader.GetString("barcode")
+                            });
                         }
                     }
                 }
@@ -86,13 +78,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                                     StockMax = reader.GetInt32("stock_max"),
                                     CreatedAt = reader.GetDateTime("created_at"),
                                     UpdatedAt = reader.GetDateTime("updated_at"),
-                                    Barcode = reader.GetString("barcode"),
-                                    PrecioCompra = reader.GetDouble("precio_compra"),
-                                    PrecioVenta = reader.GetDouble("precio_venta"),
-                                    CategoriaId = reader.GetInt32("categoria_id"),
-                                    ProveedorId = reader.GetInt32("proveedor_id"),
-                                    Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString("descripcion"),
-                                    Activo = reader.GetBoolean("activo")
+                                    Barcode = reader.GetString("barcode")
                                 };
                             }
                         }
@@ -114,25 +100,16 @@ namespace SGIC_APP.Infrastructure.Repositories
                 {
                     connection.Open();
                     using (var command = new MySqlCommand(@"
-                        INSERT INTO producto (nombre, stock, stock_min, stock_max, created_at, updated_at, barcode, 
-                                           precio_compra, precio_venta, categoria_id, proveedor_id, descripcion, activo)
-                        VALUES (@nombre, @stock, @stock_min, @stock_max, @created_at, @updated_at, @barcode,
-                               @precio_compra, @precio_venta, @categoria_id, @proveedor_id, @descripcion, @activo)", connection))
+                        INSERT INTO producto (nombre, stock, stock_min, stock_max, created_at, updated_at, barcode)
+                        VALUES (@nombre, @stock, @stock_min, @stock_max, @created_at, @updated_at, @barcode)", connection))
                     {
                         command.Parameters.AddWithValue("@nombre", producto.Nombre);
                         command.Parameters.AddWithValue("@stock", producto.Stock);
                         command.Parameters.AddWithValue("@stock_min", producto.StockMin);
                         command.Parameters.AddWithValue("@stock_max", producto.StockMax);
-                        command.Parameters.AddWithValue("@created_at", DateTime.Now);
-                        command.Parameters.AddWithValue("@updated_at", DateTime.Now);
+                        command.Parameters.AddWithValue("@created_at", producto.CreatedAt);
+                        command.Parameters.AddWithValue("@updated_at", producto.UpdatedAt);
                         command.Parameters.AddWithValue("@barcode", producto.Barcode);
-                        command.Parameters.AddWithValue("@precio_compra", producto.PrecioCompra);
-                        command.Parameters.AddWithValue("@precio_venta", producto.PrecioVenta);
-                        command.Parameters.AddWithValue("@categoria_id", producto.CategoriaId);
-                        command.Parameters.AddWithValue("@proveedor_id", producto.ProveedorId);
-                        command.Parameters.AddWithValue("@descripcion", (object?)producto.Descripcion ?? DBNull.Value);
-                        command.Parameters.AddWithValue("@activo", producto.Activo);
-
                         command.ExecuteNonQuery();
                     }
                 }
@@ -157,13 +134,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                             stock_min = @stock_min,
                             stock_max = @stock_max,
                             updated_at = @updated_at,
-                            barcode = @barcode,
-                            precio_compra = @precio_compra,
-                            precio_venta = @precio_venta,
-                            categoria_id = @categoria_id,
-                            proveedor_id = @proveedor_id,
-                            descripcion = @descripcion,
-                            activo = @activo
+                            barcode = @barcode
                         WHERE id = @id", connection))
                     {
                         command.Parameters.AddWithValue("@id", producto.Id);
@@ -171,15 +142,8 @@ namespace SGIC_APP.Infrastructure.Repositories
                         command.Parameters.AddWithValue("@stock", producto.Stock);
                         command.Parameters.AddWithValue("@stock_min", producto.StockMin);
                         command.Parameters.AddWithValue("@stock_max", producto.StockMax);
-                        command.Parameters.AddWithValue("@updated_at", DateTime.Now);
+                        command.Parameters.AddWithValue("@updated_at", producto.UpdatedAt);
                         command.Parameters.AddWithValue("@barcode", producto.Barcode);
-                        command.Parameters.AddWithValue("@precio_compra", producto.PrecioCompra);
-                        command.Parameters.AddWithValue("@precio_venta", producto.PrecioVenta);
-                        command.Parameters.AddWithValue("@categoria_id", producto.CategoriaId);
-                        command.Parameters.AddWithValue("@proveedor_id", producto.ProveedorId);
-                        command.Parameters.AddWithValue("@descripcion", (object?)producto.Descripcion ?? DBNull.Value);
-                        command.Parameters.AddWithValue("@activo", producto.Activo);
-
                         command.ExecuteNonQuery();
                     }
                 }
@@ -212,102 +176,16 @@ namespace SGIC_APP.Infrastructure.Repositories
 
         public IEnumerable<Producto> ObtenerPorCategoria(int categoriaId)
         {
-            var productos = new List<Producto>();
-            try
-            {
-                using (var connection = new MySqlConnection(_connectionString))
-                {
-                    connection.Open();
-                    using (var command = new MySqlCommand(@"
-                        SELECT p.*, c.nombre as categoria_nombre, pr.nombre as proveedor_nombre 
-                        FROM productos p
-                        LEFT JOIN categorias c ON p.categoria_id = c.id
-                        LEFT JOIN proveedores pr ON p.proveedor_id = pr.tercero_id
-                        WHERE p.categoria_id = @categoriaId
-                        ORDER BY p.id DESC", connection))
-                    {
-                        command.Parameters.AddWithValue("@categoriaId", categoriaId);
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                productos.Add(new Producto
-                                {
-                                    Id = reader.GetInt32("id"),
-                                    Nombre = reader.GetString("nombre"),
-                                    Stock = reader.GetInt32("stock"),
-                                    StockMin = reader.GetInt32("stock_min"),
-                                    StockMax = reader.GetInt32("stock_max"),
-                                    CreatedAt = reader.GetDateTime("created_at"),
-                                    UpdatedAt = reader.GetDateTime("updated_at"),
-                                    Barcode = reader.GetString("barcode"),
-                                    PrecioCompra = reader.GetDouble("precio_compra"),
-                                    PrecioVenta = reader.GetDouble("precio_venta"),
-                                    CategoriaId = reader.GetInt32("categoria_id"),
-                                    ProveedorId = reader.GetInt32("proveedor_id"),
-                                    Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString("descripcion"),
-                                    Activo = reader.GetBoolean("activo")
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                throw new Exception($"Error al obtener los productos por categoría: {ex.Message}");
-            }
-            return productos;
+            // Esta función ya no tiene sentido porque la tabla producto no tiene categoria_id
+            // Devuelvo una lista vacía o lanzo una excepción si lo prefieres
+            return new List<Producto>();
         }
 
         public IEnumerable<Producto> ObtenerPorProveedor(int proveedorId)
         {
-            var productos = new List<Producto>();
-            try
-            {
-                using (var connection = new MySqlConnection(_connectionString))
-                {
-                    connection.Open();
-                    using (var command = new MySqlCommand(@"
-                        SELECT p.*, c.nombre as categoria_nombre, pr.nombre as proveedor_nombre 
-                        FROM productos p
-                        LEFT JOIN categorias c ON p.categoria_id = c.id
-                        LEFT JOIN proveedores pr ON p.proveedor_id = pr.tercero_id
-                        WHERE p.proveedor_id = @proveedorId
-                        ORDER BY p.id DESC", connection))
-                    {
-                        command.Parameters.AddWithValue("@proveedorId", proveedorId);
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                productos.Add(new Producto
-                                {
-                                    Id = reader.GetInt32("id"),
-                                    Nombre = reader.GetString("nombre"),
-                                    Stock = reader.GetInt32("stock"),
-                                    StockMin = reader.GetInt32("stock_min"),
-                                    StockMax = reader.GetInt32("stock_max"),
-                                    CreatedAt = reader.GetDateTime("created_at"),
-                                    UpdatedAt = reader.GetDateTime("updated_at"),
-                                    Barcode = reader.GetString("barcode"),
-                                    PrecioCompra = reader.GetDouble("precio_compra"),
-                                    PrecioVenta = reader.GetDouble("precio_venta"),
-                                    CategoriaId = reader.GetInt32("categoria_id"),
-                                    ProveedorId = reader.GetInt32("proveedor_id"),
-                                    Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString("descripcion"),
-                                    Activo = reader.GetBoolean("activo")
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                throw new Exception($"Error al obtener los productos por proveedor: {ex.Message}");
-            }
-            return productos;
+            // Esta función ya no tiene sentido porque la tabla producto no tiene proveedor_id
+            // Devuelvo una lista vacía o lanzo una excepción si lo prefieres
+            return new List<Producto>();
         }
 
         public IEnumerable<Producto> ObtenerProductosBajoStock()
@@ -319,12 +197,9 @@ namespace SGIC_APP.Infrastructure.Repositories
                 {
                     connection.Open();
                     using (var command = new MySqlCommand(@"
-                        SELECT p.*, c.nombre as categoria_nombre, pr.nombre as proveedor_nombre 
-                        FROM productos p
-                        LEFT JOIN categorias c ON p.categoria_id = c.id
-                        LEFT JOIN proveedores pr ON p.proveedor_id = pr.tercero_id
-                        WHERE p.stock <= p.stock_min
-                        ORDER BY p.id DESC", connection))
+                        SELECT * FROM producto
+                        WHERE stock <= stock_min
+                        ORDER BY id DESC", connection))
                     {
                         using (var reader = command.ExecuteReader())
                         {
@@ -339,13 +214,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                                     StockMax = reader.GetInt32("stock_max"),
                                     CreatedAt = reader.GetDateTime("created_at"),
                                     UpdatedAt = reader.GetDateTime("updated_at"),
-                                    Barcode = reader.GetString("barcode"),
-                                    PrecioCompra = reader.GetDouble("precio_compra"),
-                                    PrecioVenta = reader.GetDouble("precio_venta"),
-                                    CategoriaId = reader.GetInt32("categoria_id"),
-                                    ProveedorId = reader.GetInt32("proveedor_id"),
-                                    Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString("descripcion"),
-                                    Activo = reader.GetBoolean("activo")
+                                    Barcode = reader.GetString("barcode")
                                 });
                             }
                         }

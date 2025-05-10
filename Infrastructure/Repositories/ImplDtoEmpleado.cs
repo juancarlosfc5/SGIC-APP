@@ -26,14 +26,10 @@ namespace SGIC_APP.Infrastructure.Repositories
                 {
                     command.Connection = connection;
                     command.CommandText = @"
-                        SELECT t.id, t.nombre, t.apellidos, t.email, t.tipo_doc_id, t.tipo_tercero_id, t.ciudad_id,
-                               tt.numero as telefono, tt.tipo as tipo_telefono,
-                               e.fecha_ingreso, e.salario_base, e.eps_id, e.arl_id
+                        SELECT t.*, e.fecha_ingreso, e.salario_base, e.eps_id, e.arl_id
                         FROM tercero t
                         INNER JOIN empleado e ON t.id = e.tercero_id
-                        LEFT JOIN tercero_telefono tt ON t.id = tt.tercero_id
-                        WHERE t.tipo_tercero_id = 1
-                        ORDER BY t.id DESC";
+                        ORDER BY t.id";
 
                     using (var reader = command.ExecuteReader())
                     {
@@ -41,26 +37,26 @@ namespace SGIC_APP.Infrastructure.Repositories
                         {
                             var empleado = new EmpleadoDto
                             {
-                                TerceroId = reader.GetString("id"),
-                                Nombre = reader.GetString("nombre"),
-                                Apellidos = reader.GetString("apellidos"),
-                                Email = reader.GetString("email"),
-                                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? string.Empty : reader.GetString("telefono"),
-                                TipoTelefono = reader.IsDBNull(reader.GetOrdinal("tipo_telefono")) ? string.Empty : reader.GetString("tipo_telefono"),
-                                TipoDocId = reader.GetInt32("tipo_doc_id"),
-                                TipoTerceroId = reader.GetInt32("tipo_tercero_id"),
-                                CiudadId = reader.GetInt32("ciudad_id"),
-                                SalarioBase = reader.GetDouble("salario_base")
+                                TerceroId = reader["id"]?.ToString() ?? string.Empty,
+                                Nombre = reader["nombre"]?.ToString() ?? string.Empty,
+                                Apellidos = reader["apellidos"]?.ToString() ?? string.Empty,
+                                Email = reader["email"]?.ToString() ?? string.Empty,
+                                TipoDocId = reader["tipo_doc_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_doc_id"]) : 0,
+                                TipoTerceroId = reader["tipo_tercero_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_tercero_id"]) : 0,
+                                CiudadId = reader["ciudad_id"] != DBNull.Value ? Convert.ToInt32(reader["ciudad_id"]) : 0
                             };
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("fecha_ingreso")))
-                                empleado.FechaIngreso = reader.GetDateTime("fecha_ingreso");
+                            if (reader["fecha_ingreso"] != DBNull.Value)
+                                empleado.FechaIngreso = Convert.ToDateTime(reader["fecha_ingreso"]);
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("eps_id")))
-                                empleado.EpsId = reader.GetInt32("eps_id");
+                            if (reader["salario_base"] != DBNull.Value)
+                                empleado.SalarioBase = Convert.ToDouble(reader["salario_base"]);
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("arl_id")))
-                                empleado.ArlId = reader.GetInt32("arl_id");
+                            if (reader["eps_id"] != DBNull.Value)
+                                empleado.EpsId = Convert.ToInt32(reader["eps_id"]);
+
+                            if (reader["arl_id"] != DBNull.Value)
+                                empleado.ArlId = Convert.ToInt32(reader["arl_id"]);
 
                             empleados.Add(empleado);
                         }
@@ -79,13 +75,10 @@ namespace SGIC_APP.Infrastructure.Repositories
                 {
                     command.Connection = connection;
                     command.CommandText = @"
-                        SELECT t.id, t.nombre, t.apellidos, t.email, t.tipo_doc_id, t.tipo_tercero_id, t.ciudad_id,
-                               tt.numero as telefono, tt.tipo as tipo_telefono,
-                               e.fecha_ingreso, e.salario_base, e.eps_id, e.arl_id
+                        SELECT t.*, e.fecha_ingreso, e.salario_base, e.eps_id, e.arl_id
                         FROM tercero t
                         INNER JOIN empleado e ON t.id = e.tercero_id
-                        LEFT JOIN tercero_telefono tt ON t.id = tt.tercero_id
-                        WHERE t.id = @id AND t.tipo_tercero_id = 1";
+                        WHERE t.id = @id";
                     command.Parameters.AddWithValue("@id", id);
 
                     using (var reader = command.ExecuteReader())
@@ -94,26 +87,26 @@ namespace SGIC_APP.Infrastructure.Repositories
                         {
                             var empleado = new EmpleadoDto
                             {
-                                TerceroId = reader.GetString("id"),
-                                Nombre = reader.GetString("nombre"),
-                                Apellidos = reader.GetString("apellidos"),
-                                Email = reader.GetString("email"),
-                                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? string.Empty : reader.GetString("telefono"),
-                                TipoTelefono = reader.IsDBNull(reader.GetOrdinal("tipo_telefono")) ? string.Empty : reader.GetString("tipo_telefono"),
-                                TipoDocId = reader.GetInt32("tipo_doc_id"),
-                                TipoTerceroId = reader.GetInt32("tipo_tercero_id"),
-                                CiudadId = reader.GetInt32("ciudad_id"),
-                                SalarioBase = reader.GetDouble("salario_base")
+                                TerceroId = reader["id"]?.ToString() ?? string.Empty,
+                                Nombre = reader["nombre"]?.ToString() ?? string.Empty,
+                                Apellidos = reader["apellidos"]?.ToString() ?? string.Empty,
+                                Email = reader["email"]?.ToString() ?? string.Empty,
+                                TipoDocId = reader["tipo_doc_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_doc_id"]) : 0,
+                                TipoTerceroId = reader["tipo_tercero_id"] != DBNull.Value ? Convert.ToInt32(reader["tipo_tercero_id"]) : 0,
+                                CiudadId = reader["ciudad_id"] != DBNull.Value ? Convert.ToInt32(reader["ciudad_id"]) : 0
                             };
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("fecha_ingreso")))
-                                empleado.FechaIngreso = reader.GetDateTime("fecha_ingreso");
+                            if (reader["fecha_ingreso"] != DBNull.Value)
+                                empleado.FechaIngreso = Convert.ToDateTime(reader["fecha_ingreso"]);
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("eps_id")))
-                                empleado.EpsId = reader.GetInt32("eps_id");
+                            if (reader["salario_base"] != DBNull.Value)
+                                empleado.SalarioBase = Convert.ToDouble(reader["salario_base"]);
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("arl_id")))
-                                empleado.ArlId = reader.GetInt32("arl_id");
+                            if (reader["eps_id"] != DBNull.Value)
+                                empleado.EpsId = Convert.ToInt32(reader["eps_id"]);
+
+                            if (reader["arl_id"] != DBNull.Value)
+                                empleado.ArlId = Convert.ToInt32(reader["arl_id"]);
 
                             return empleado;
                         }
@@ -123,10 +116,33 @@ namespace SGIC_APP.Infrastructure.Repositories
             return null;
         }
 
-        public void Crear(EmpleadoDto dto)
+        private bool ExisteTerceroId(string terceroId)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new MySqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandText = @"
+                        SELECT COUNT(*) 
+                        FROM empleado e
+                        INNER JOIN tercero t ON e.tercero_id = t.id
+                        WHERE t.id = @id";
+                    command.Parameters.AddWithValue("@id", terceroId);
+
+                    var count = Convert.ToInt32(command.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+        }
+
+        public void Crear(EmpleadoDto empleado)
+        {
+            if (ExisteTerceroId(empleado.TerceroId))
+            {
+                throw new Exception($"El TerceroId '{empleado.TerceroId}' ya está registrado como empleado. Por favor, utilice otro ID.");
+            }
 
             using (var connection = new MySqlConnection(_connectionString))
             {
@@ -140,38 +156,20 @@ namespace SGIC_APP.Infrastructure.Repositories
                             command.Connection = connection;
                             command.Transaction = transaction;
 
-                            // Generar ID único para el tercero
-                            string terceroId = DateTime.Now.ToString("yyyyMMddHHmmss");
-
                             // Insertar en tercero
                             command.CommandText = @"
                                 INSERT INTO tercero (id, nombre, apellidos, email, tipo_doc_id, tipo_tercero_id, ciudad_id)
                                 VALUES (@id, @nombre, @apellidos, @email, @tipo_doc_id, @tipo_tercero_id, @ciudad_id)";
 
-                            command.Parameters.AddWithValue("@id", terceroId);
-                            command.Parameters.AddWithValue("@nombre", dto.Nombre);
-                            command.Parameters.AddWithValue("@apellidos", dto.Apellidos);
-                            command.Parameters.AddWithValue("@email", dto.Email);
-                            command.Parameters.AddWithValue("@tipo_doc_id", dto.TipoDocId);
-                            command.Parameters.AddWithValue("@tipo_tercero_id", dto.TipoTerceroId);
-                            command.Parameters.AddWithValue("@ciudad_id", dto.CiudadId);
+                            command.Parameters.AddWithValue("@id", empleado.TerceroId);
+                            command.Parameters.AddWithValue("@nombre", empleado.Nombre);
+                            command.Parameters.AddWithValue("@apellidos", empleado.Apellidos);
+                            command.Parameters.AddWithValue("@email", empleado.Email);
+                            command.Parameters.AddWithValue("@tipo_doc_id", empleado.TipoDocId);
+                            command.Parameters.AddWithValue("@tipo_tercero_id", empleado.TipoTerceroId);
+                            command.Parameters.AddWithValue("@ciudad_id", empleado.CiudadId);
 
                             command.ExecuteNonQuery();
-
-                            // Insertar teléfono si existe
-                            if (!string.IsNullOrEmpty(dto.Telefono))
-                            {
-                                command.Parameters.Clear();
-                                command.CommandText = @"
-                                    INSERT INTO tercero_telefono (numero, tipo, tercero_id)
-                                    VALUES (@numero, @tipo, @tercero_id)";
-
-                                command.Parameters.AddWithValue("@numero", dto.Telefono);
-                                command.Parameters.AddWithValue("@tipo", dto.TipoTelefono);
-                                command.Parameters.AddWithValue("@tercero_id", terceroId);
-
-                                command.ExecuteNonQuery();
-                            }
 
                             // Insertar en empleado
                             command.Parameters.Clear();
@@ -179,11 +177,11 @@ namespace SGIC_APP.Infrastructure.Repositories
                                 INSERT INTO empleado (tercero_id, fecha_ingreso, salario_base, eps_id, arl_id)
                                 VALUES (@tercero_id, @fecha_ingreso, @salario_base, @eps_id, @arl_id)";
 
-                            command.Parameters.AddWithValue("@tercero_id", terceroId);
-                            command.Parameters.AddWithValue("@fecha_ingreso", (object?)dto.FechaIngreso ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@salario_base", dto.SalarioBase);
-                            command.Parameters.AddWithValue("@eps_id", (object?)dto.EpsId ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@arl_id", (object?)dto.ArlId ?? DBNull.Value);
+                            command.Parameters.AddWithValue("@tercero_id", empleado.TerceroId);
+                            command.Parameters.AddWithValue("@fecha_ingreso", empleado.FechaIngreso ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@salario_base", empleado.SalarioBase);
+                            command.Parameters.AddWithValue("@eps_id", empleado.EpsId ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@arl_id", empleado.ArlId ?? (object)DBNull.Value);
 
                             command.ExecuteNonQuery();
                         }
@@ -199,14 +197,8 @@ namespace SGIC_APP.Infrastructure.Repositories
             }
         }
 
-        public void Actualizar(EmpleadoDto dto)
+        public void Actualizar(EmpleadoDto empleado)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
-            if (string.IsNullOrEmpty(dto.TerceroId))
-                throw new ArgumentException("El ID del tercero es inválido", nameof(dto));
-
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -219,19 +211,10 @@ namespace SGIC_APP.Infrastructure.Repositories
                             command.Connection = connection;
                             command.Transaction = transaction;
 
-                            // Verificar si existe el tercero
-                            command.CommandText = "SELECT COUNT(*) FROM tercero WHERE id = @id";
-                            command.Parameters.AddWithValue("@id", dto.TerceroId);
-                            int count = Convert.ToInt32(command.ExecuteScalar());
-
-                            if (count == 0)
-                                throw new Exception("No se encontró el empleado con el ID especificado");
-
                             // Actualizar tercero
-                            command.Parameters.Clear();
                             command.CommandText = @"
-                                UPDATE tercero 
-                                SET nombre = @nombre,
+                                UPDATE tercero SET 
+                                    nombre = @nombre,
                                     apellidos = @apellidos,
                                     email = @email,
                                     tipo_doc_id = @tipo_doc_id,
@@ -239,49 +222,31 @@ namespace SGIC_APP.Infrastructure.Repositories
                                     ciudad_id = @ciudad_id
                                 WHERE id = @id";
 
-                            command.Parameters.AddWithValue("@id", dto.TerceroId);
-                            command.Parameters.AddWithValue("@nombre", dto.Nombre);
-                            command.Parameters.AddWithValue("@apellidos", dto.Apellidos);
-                            command.Parameters.AddWithValue("@email", dto.Email);
-                            command.Parameters.AddWithValue("@tipo_doc_id", dto.TipoDocId);
-                            command.Parameters.AddWithValue("@tipo_tercero_id", dto.TipoTerceroId);
-                            command.Parameters.AddWithValue("@ciudad_id", dto.CiudadId);
+                            command.Parameters.AddWithValue("@id", empleado.TerceroId);
+                            command.Parameters.AddWithValue("@nombre", empleado.Nombre);
+                            command.Parameters.AddWithValue("@apellidos", empleado.Apellidos);
+                            command.Parameters.AddWithValue("@email", empleado.Email);
+                            command.Parameters.AddWithValue("@tipo_doc_id", empleado.TipoDocId);
+                            command.Parameters.AddWithValue("@tipo_tercero_id", empleado.TipoTerceroId);
+                            command.Parameters.AddWithValue("@ciudad_id", empleado.CiudadId);
 
                             command.ExecuteNonQuery();
-
-                            // Actualizar o insertar teléfono
-                            if (!string.IsNullOrEmpty(dto.Telefono))
-                            {
-                                command.Parameters.Clear();
-                                command.CommandText = @"
-                                    INSERT INTO tercero_telefono (numero, tipo, tercero_id)
-                                    VALUES (@numero, @tipo, @tercero_id)
-                                    ON DUPLICATE KEY UPDATE
-                                    numero = @numero,
-                                    tipo = @tipo";
-
-                                command.Parameters.AddWithValue("@numero", dto.Telefono);
-                                command.Parameters.AddWithValue("@tipo", dto.TipoTelefono);
-                                command.Parameters.AddWithValue("@tercero_id", dto.TerceroId);
-
-                                command.ExecuteNonQuery();
-                            }
 
                             // Actualizar empleado
                             command.Parameters.Clear();
                             command.CommandText = @"
-                                UPDATE empleado 
-                                SET fecha_ingreso = @fecha_ingreso,
+                                UPDATE empleado SET 
+                                    fecha_ingreso = @fecha_ingreso,
                                     salario_base = @salario_base,
                                     eps_id = @eps_id,
                                     arl_id = @arl_id
                                 WHERE tercero_id = @tercero_id";
 
-                            command.Parameters.AddWithValue("@tercero_id", dto.TerceroId);
-                            command.Parameters.AddWithValue("@fecha_ingreso", (object?)dto.FechaIngreso ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@salario_base", dto.SalarioBase);
-                            command.Parameters.AddWithValue("@eps_id", (object?)dto.EpsId ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@arl_id", (object?)dto.ArlId ?? DBNull.Value);
+                            command.Parameters.AddWithValue("@tercero_id", empleado.TerceroId);
+                            command.Parameters.AddWithValue("@fecha_ingreso", empleado.FechaIngreso ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@salario_base", empleado.SalarioBase);
+                            command.Parameters.AddWithValue("@eps_id", empleado.EpsId ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@arl_id", empleado.ArlId ?? (object)DBNull.Value);
 
                             command.ExecuteNonQuery();
                         }
@@ -299,9 +264,6 @@ namespace SGIC_APP.Infrastructure.Repositories
 
         public void Eliminar(string id)
         {
-            if (string.IsNullOrEmpty(id))
-                throw new ArgumentException("El ID del tercero es inválido", nameof(id));
-
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -314,23 +276,20 @@ namespace SGIC_APP.Infrastructure.Repositories
                             command.Connection = connection;
                             command.Transaction = transaction;
 
-                            // Verificar si existe el tercero
-                            command.CommandText = "SELECT COUNT(*) FROM tercero WHERE id = @id";
+                            // Eliminar teléfonos asociados
+                            command.CommandText = "DELETE FROM tercero_telefono WHERE tercero_id = @id";
                             command.Parameters.AddWithValue("@id", id);
-                            int count = Convert.ToInt32(command.ExecuteScalar());
+                            command.ExecuteNonQuery();
 
-                            if (count == 0)
-                                throw new Exception("No se encontró el empleado con el ID especificado");
+                            // Eliminar de cliente si existe
+                            command.Parameters.Clear();
+                            command.CommandText = "DELETE FROM cliente WHERE tercero_id = @id";
+                            command.Parameters.AddWithValue("@id", id);
+                            command.ExecuteNonQuery();
 
                             // Eliminar de empleado
                             command.Parameters.Clear();
                             command.CommandText = "DELETE FROM empleado WHERE tercero_id = @id";
-                            command.Parameters.AddWithValue("@id", id);
-                            command.ExecuteNonQuery();
-
-                            // Eliminar teléfonos
-                            command.Parameters.Clear();
-                            command.CommandText = "DELETE FROM tercero_telefono WHERE tercero_id = @id";
                             command.Parameters.AddWithValue("@id", id);
                             command.ExecuteNonQuery();
 

@@ -12,11 +12,5 @@ namespace SGIC_APP.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string? Barcode { get; set; }
-        public double PrecioCompra { get; set; }
-        public double PrecioVenta { get; set; }
-        public int CategoriaId { get; set; }
-        public int ProveedorId { get; set; }
-        public string? Descripcion { get; set; }
-        public bool Activo { get; set; }
     }
 } 
