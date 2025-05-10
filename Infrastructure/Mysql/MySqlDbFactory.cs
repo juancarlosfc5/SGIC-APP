@@ -38,5 +38,25 @@ namespace SGIC_APP.Infrastructure.Mysql
         {
             return new ImplDtoProveedor(_connectionString);
         }
+
+        public IDtoPais<Pais> CrearPaisRepository()
+        {
+            return new ImplDtoPais(_connectionString);
+        }
+
+        public IDtoRegion<Region> CrearRegionRepository()
+        {
+            return new ImplDtoRegion(_connectionString);
+        }
+
+        public IDtoCiudad<Ciudad> CrearCiudadRepository()
+        {
+            return new ImplDtoCiudad(_connectionString);
+        }
+
+        public IDtoEmpresa<Empresa> CrearEmpresaRepository()
+        {
+            return new ImplDtoEmpresa(_connectionString);
+        }
     }
 } 
