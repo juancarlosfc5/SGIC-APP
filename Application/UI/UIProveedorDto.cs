@@ -23,10 +23,9 @@ namespace SGIC_APP.Application.UI
                 Console.Clear();
                 Console.WriteLine("=== GESTIÓN DE PROVEEDORES ===");
                 Console.WriteLine("1. Listar Proveedores");
-                Console.WriteLine("2. Buscar Proveedor");
-                Console.WriteLine("3. Crear Proveedor");
-                Console.WriteLine("4. Actualizar Proveedor");
-                Console.WriteLine("5. Eliminar Proveedor");
+                Console.WriteLine("2. Crear Proveedor");
+                Console.WriteLine("3. Actualizar Proveedor");
+                Console.WriteLine("4. Eliminar Proveedor");
                 Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
@@ -40,18 +39,16 @@ namespace SGIC_APP.Application.UI
                             ListarProveedores();
                             break;
                         case "2":
-                            BuscarProveedor();
-                            break;
-                        case "3":
                             CrearProveedor();
                             break;
-                        case "4":
+                        case "3":
                             ActualizarProveedor();
                             break;
-                        case "5":
+                        case "4":
                             EliminarProveedor();
                             break;
                         case "0":
+                            Console.Clear();
                             return;
                         default:
                             Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -84,40 +81,6 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine($"Día de Pago: {proveedor.DiaPago}");
                 Console.WriteLine($"Fecha de Registro: {proveedor.FechaRegistro:dd/MM/yyyy}");
                 Console.WriteLine("------------------------");
-            }
-
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
-        }
-
-        private void BuscarProveedor()
-        {
-            Console.Clear();
-            Console.WriteLine("=== BUSCAR PROVEEDOR ===\n");
-            Console.Write("Ingrese el ID del proveedor: ");
-
-            if (int.TryParse(Console.ReadLine(), out int id))
-            {
-                var proveedor = _proveedorRepository.ObtenerPorId(id.ToString());
-                if (proveedor != null)
-                {
-                    Console.WriteLine("\nInformación del Proveedor:");
-                    Console.WriteLine($"ID: {proveedor.TerceroId}");
-                    Console.WriteLine($"Nombre: {proveedor.Nombre} {proveedor.Apellidos}");
-                    Console.WriteLine($"Email: {proveedor.Email}");
-                    Console.WriteLine($"Teléfono: {proveedor.Telefono}");
-                    Console.WriteLine($"Descuento: {proveedor.Descuento}%");
-                    Console.WriteLine($"Día de Pago: {proveedor.DiaPago}");
-                    Console.WriteLine($"Fecha de Registro: {proveedor.FechaRegistro:dd/MM/yyyy}");
-                }
-                else
-                {
-                    Console.WriteLine("\nNo se encontró el proveedor.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("\nID inválido.");
             }
 
             Console.WriteLine("\nPresione cualquier tecla para continuar...");

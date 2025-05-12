@@ -28,7 +28,7 @@ namespace SGIC_APP.Application.UI
             {
                 Console.Clear();
                 Console.WriteLine("=== MENÚ DE CLIENTES ===");
-                Console.WriteLine("1. Ver todos los clientes");
+                Console.WriteLine("1. Listar clientes");
                 Console.WriteLine("2. Crear nuevo cliente");
                 Console.WriteLine("3. Actualizar cliente");
                 Console.WriteLine("4. Eliminar cliente");
@@ -59,6 +59,7 @@ namespace SGIC_APP.Application.UI
                             EliminarCliente();
                             break;
                         case 0:
+                            Console.Clear();
                             return;
                         default:
                             Console.WriteLine("\nOpción inválida. Presione cualquier tecla para continuar...");
@@ -109,7 +110,7 @@ namespace SGIC_APP.Application.UI
                 throw new Exception("El TERCERO_ID es requerido.");
             if (_clienteRepository.ObtenerPorId(terceroId) != null)
             {
-                Console.WriteLine("\nEl TERCERO_ID ingresado ya está en uso (cliente, empleado o proveedor).");
+                Console.WriteLine("\nEl número de identificación ingresado ya está registrado como cliente.");
                 Console.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;

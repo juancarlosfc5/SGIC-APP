@@ -23,7 +23,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-                    using (var command = new MySqlCommand("SELECT * FROM region ORDER BY id DESC", connection))
+                    using (var command = new MySqlCommand("SELECT * FROM region ORDER BY id ASC", connection))
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())

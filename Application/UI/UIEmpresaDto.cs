@@ -27,7 +27,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Agregar Empresa");
                 Console.WriteLine("3. Actualizar Empresa");
                 Console.WriteLine("4. Eliminar Empresa");
-                Console.WriteLine("5. Volver al Menú Principal");
+                Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -45,7 +45,8 @@ namespace SGIC_APP.Application.UI
                     case "4":
                         EliminarEmpresa();
                         break;
-                    case "5":
+                    case "0":
+                        Console.Clear();
                         return;
                     default:
                         Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -139,6 +140,21 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR EMPRESA ===\n");
 
+            // Listar las empresas existentes para que el usuario pueda ver los ID y nombres
+            var empresasExistentes = _empresaRepository.ObtenerTodos().ToList();
+            if (!empresasExistentes.Any())
+            {
+                Console.WriteLine("No hay empresas registradas.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Empresas existentes:");
+            foreach (var emp in empresasExistentes)
+            {
+                Console.WriteLine($"ID: {emp.Id} - Nombre: {emp.Nombre}");
+            }
+            Console.WriteLine();
             Console.Write("Ingrese el ID de la empresa a actualizar: ");
             var id = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(id))

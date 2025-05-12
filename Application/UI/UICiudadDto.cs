@@ -27,7 +27,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Agregar Ciudad");
                 Console.WriteLine("3. Actualizar Ciudad");
                 Console.WriteLine("4. Eliminar Ciudad");
-                Console.WriteLine("5. Volver al Menú Principal");
+                Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -45,7 +45,8 @@ namespace SGIC_APP.Application.UI
                     case "4":
                         EliminarCiudad();
                         break;
-                    case "5":
+                    case "0":
+                        Console.Clear();
                         return;
                     default:
                         Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -133,6 +134,21 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR CIUDAD ===\n");
 
+            // Listar las ciudades existentes para que el usuario pueda ver los ID y nombres
+            var ciudadesExistentes = _ciudadRepository.ObtenerTodos().ToList();
+            if (!ciudadesExistentes.Any())
+            {
+                Console.WriteLine("No hay ciudades registradas.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Ciudades existentes:");
+            foreach (var ciudadItem in ciudadesExistentes)
+            {
+                Console.WriteLine($"ID: {ciudadItem.Id} - Nombre: {ciudadItem.Nombre}");
+            }
+            Console.WriteLine();
             Console.Write("Ingrese el ID de la ciudad a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {

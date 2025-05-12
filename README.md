@@ -1,11 +1,27 @@
-## SGIC APP 
+# 📦 SGIC APP - Sistema de Gestión Integral Comercial
 
+¡Bienvenido al repositorio del proyecto **SGIC**! 🎯 Esta aplicación está diseñada para administrar eficientemente la información de empleados, clientes, proveedores, productos, compras, ventas y más. Ideal para entornos empresariales que requieren una estructura de datos robusta y escalable.
 
-DDL
+---
 
-DROP DATABASE NJSIGC;
-CREATE DATABASE IF NOT EXISTS NJSIGC;
-USE NJSIGC;
+## 📁 Estructura del Repositorio
+
+- `DDL.sql` - Contiene las sentencias para la creación de la base de datos y todas sus tablas.
+- `DML.sql` - Contiene la inserción de datos de ejemplo para poblar la base de datos.
+- `Procedimientos.sql` - Contiene los procedimientos almacenados utilizados por la aplicación.
+
+---
+
+## 🧱 Estructura de la Base de Datos
+
+A continuación se encuentran los bloques necesarios para construir la base de datos del sistema SGIC. Copia el contenido respectivo en tu gestor de base de datos MySQL para ejecutarlo.
+
+### 🏗️ DDL - Definición de la Base de Datos y Tablas
+
+```
+DROP DATABASE NJSGIC;
+CREATE DATABASE IF NOT EXISTS NJSGIC;
+USE NJSGIC;
 
 -- TIPOS Y TERCEROS
 CREATE TABLE tipo_documento (
@@ -218,11 +234,12 @@ CREATE TABLE plan_producto (
 );
 
 SHOW TABLES;
+```
 
+### 🧪 DML - Inserción de Datos de Prueba
 
-DML 
-
-USE NJSIGC;
+```
+USE NJSGIC;
 
 -- tipo_documento
 INSERT INTO tipo_documento (descripcion) VALUES 
@@ -368,7 +385,12 @@ INSERT INTO plan_producto (plan_id, producto_id) VALUES
 (1, 1), 
 (2, 2), 
 (3, 3);
+```
 
+### ⚙️ Procedimientos Almacenados
+
+#### Procedimiento para crear Cliente
+```
 DROP PROCEDURE IF EXISTS sp_crear_cliente;
 DELIMITER $$
 
@@ -402,3 +424,118 @@ BEGIN
 END$$
 
 DELIMITER ;
+```
+
+#### Procedimiento para crear Empleado
+```
+DROP PROCEDURE IF EXISTS sp_crear_empleado;
+DELIMITER $$
+
+CREATE PROCEDURE sp_crear_empleado(
+    IN p_tercero_id VARCHAR(20),
+    IN p_nombre VARCHAR(50),
+    IN p_apellidos VARCHAR(50),
+    IN p_email VARCHAR(80),
+    IN p_tipo_doc_id INT,
+    IN p_tipo_tercero_id INT,
+    IN p_ciudad_id INT,
+    IN p_fecha_ingreso DATE,
+    IN p_salario_base DOUBLE,
+    IN p_eps_id INT,
+    IN p_arl_id INT
+)
+BEGIN
+    START TRANSACTION;
+
+    INSERT INTO tercero (
+        id, nombre, apellidos, email, tipo_doc_id, tipo_tercero_id, ciudad_id
+    ) VALUES (
+        p_tercero_id, p_nombre, p_apellidos, p_email, p_tipo_doc_id, p_tipo_tercero_id, p_ciudad_id
+    );
+
+    INSERT INTO empleado (
+        tercero_id, fecha_ingreso, salario_base, eps_id, arl_id
+    ) VALUES (
+        p_tercero_id, p_fecha_ingreso, p_salario_base, p_eps_id, p_arl_id
+    );
+
+    COMMIT;
+END$$
+
+DELIMITER ;
+```
+
+#### Procedimiento para crear Proveedor
+```
+DROP PROCEDURE IF EXISTS sp_crear_proveedor;
+DELIMITER $$
+
+CREATE PROCEDURE sp_crear_proveedor(
+    IN p_tercero_id VARCHAR(20),
+    IN p_nombre VARCHAR(50),
+    IN p_apellidos VARCHAR(50),
+    IN p_email VARCHAR(80),
+    IN p_tipo_doc_id INT,
+    IN p_tipo_tercero_id INT,
+    IN p_ciudad_id INT,
+    IN p_dcto DOUBLE,
+    IN p_dia_pago INT
+)
+BEGIN
+    START TRANSACTION;
+
+    INSERT INTO tercero (
+        id, nombre, apellidos, email, tipo_doc_id, tipo_tercero_id, ciudad_id
+    ) VALUES (
+        p_tercero_id, p_nombre, p_apellidos, p_email, p_tipo_doc_id, p_tipo_tercero_id, p_ciudad_id
+    );
+
+    INSERT INTO proveedor (
+        tercero_id, dcto, dia_pago
+    ) VALUES (
+        p_tercero_id, p_dcto, p_dia_pago
+    );
+
+    COMMIT;
+END$$
+
+DELIMITER ;
+```
+
+---
+
+## 📝 Notas Importantes
+
+🔐 **¡Importante!** Dentro del archivo `Program.cs` debes cambiar la contraseña del string de conexión por la que tienes configurada en tu entorno local de MySQL. Busca una línea similar a esta:
+
+```csharp
+options.UseMySql("server=localhost;user=root;password=TU_CONTRASENA;database=NJSGIC", ...);
+```
+
+⚠️ Reemplaza `"TU_CONTRASENA"` por la contraseña que usas en tu gestor de MySQL.
+
+---
+
+## 🚀 Tecnologías Usadas
+
+- Base de Datos: **MySQL**
+- Backend: **.NET Core**
+- Lenguaje: **C#**
+- Scripts: **SQL**
+
+---
+
+## 📌 Recomendaciones
+
+- Usa **MySQL Workbench** o un cliente similar para ejecutar los scripts.
+- Verifica siempre los datos de conexión a la base de datos.
+- Asegúrate de tener privilegios suficientes para crear bases de datos, tablas y procedimientos.
+
+---
+
+## 📫 Contacto
+
+¿Tienes preguntas, sugerencias o quieres colaborar? No dudes en abrir un issue o enviar un pull request.
+
+¡Gracias por usar SGIC! 🚀
+

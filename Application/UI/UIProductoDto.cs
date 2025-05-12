@@ -44,6 +44,7 @@ namespace SGIC_APP.Application.UI
                         EliminarProducto();
                         break;
                     case "0":
+                        Console.Clear();
                         return;
                     default:
                         Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
