@@ -27,7 +27,7 @@ namespace SGIC_APP.Application.UI
             {
                 Console.Clear();
                 Console.WriteLine("=== MENÚ DE EMPLEADOS ===");
-                Console.WriteLine("1. Ver todos los empleados");
+                Console.WriteLine("1. Listar empleados");
                 Console.WriteLine("2. Crear nuevo empleado");
                 Console.WriteLine("3. Actualizar empleado");
                 Console.WriteLine("4. Eliminar empleado");
@@ -58,6 +58,7 @@ namespace SGIC_APP.Application.UI
                             EliminarEmpleado();
                             break;
                         case 0:
+                            Console.Clear();
                             return;
                         default:
                             Console.WriteLine("\nOpción inválida. Presione cualquier tecla para continuar...");
@@ -108,7 +109,7 @@ namespace SGIC_APP.Application.UI
                 throw new Exception("El TERCERO_ID es requerido.");
             if (_empleadoRepository.ObtenerPorId(terceroId) != null)
             {
-                Console.WriteLine("\nEl TERCERO_ID ingresado ya está en uso (cliente, empleado o proveedor).");
+                Console.WriteLine("\nEl número de identificación ingresado ya está registrado como cliente");
                 Console.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
@@ -245,7 +246,7 @@ namespace SGIC_APP.Application.UI
 
             Console.Write("\nIngrese el TERCERO_ID del empleado a eliminar: ");
             var id = Console.ReadLine();
-            var empleado = _empleadoRepository.ObtenerPorId(id);
+            var empleado = _empleadoRepository.ObtenerPorId(id!);
             if (empleado == null)
             {
                 Console.WriteLine("Empleado no encontrado.");
@@ -261,7 +262,7 @@ namespace SGIC_APP.Application.UI
                 return;
             }
 
-            _empleadoRepository.Eliminar(id);
+            _empleadoRepository.Eliminar(id!);
             Console.WriteLine("Empleado eliminado exitosamente.");
             Console.ReadKey();
         }

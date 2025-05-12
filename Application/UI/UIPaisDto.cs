@@ -25,7 +25,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Agregar País");
                 Console.WriteLine("3. Actualizar País");
                 Console.WriteLine("4. Eliminar País");
-                Console.WriteLine("5. Volver al Menú Principal");
+                Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -43,7 +43,8 @@ namespace SGIC_APP.Application.UI
                     case "4":
                         EliminarPais();
                         break;
-                    case "5":
+                    case "0":
+                        Console.Clear();
                         return;
                     default:
                         Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -106,6 +107,21 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR PAÍS ===\n");
 
+            // Listar los países existentes para que el usuario pueda ver sus ID y nombres
+            var paisesExistentes = _paisRepository.ObtenerTodos().ToList();
+            if (!paisesExistentes.Any())
+            {
+                Console.WriteLine("No hay países registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Países existentes:");
+            foreach (var p in paisesExistentes)
+            {
+                Console.WriteLine($"ID: {p.Id} - Nombre: {p.Nombre}");
+            }
+            Console.WriteLine();
             Console.Write("Ingrese el ID del país a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {

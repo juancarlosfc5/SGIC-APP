@@ -27,7 +27,7 @@ namespace SGIC_APP.Application.UI
                 Console.WriteLine("2. Agregar Región");
                 Console.WriteLine("3. Actualizar Región");
                 Console.WriteLine("4. Eliminar Región");
-                Console.WriteLine("5. Volver al Menú Principal");
+                Console.WriteLine("0. Volver al Menú Principal");
                 Console.Write("\nSeleccione una opción: ");
 
                 var opcion = Console.ReadLine();
@@ -45,7 +45,8 @@ namespace SGIC_APP.Application.UI
                     case "4":
                         EliminarRegion();
                         break;
-                    case "5":
+                    case "0":
+                        Console.Clear();
                         return;
                     default:
                         Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar...");
@@ -133,6 +134,21 @@ namespace SGIC_APP.Application.UI
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR REGIÓN ===\n");
 
+            // Listar las regiones existentes para que el usuario pueda ver los ID
+            var regionesExistentes = _regionRepository.ObtenerTodos().ToList();
+            if (!regionesExistentes.Any())
+            {
+                Console.WriteLine("No hay regiones registradas.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Regiones existentes:");
+            foreach (var reg in regionesExistentes)
+            {
+                Console.WriteLine($"ID: {reg.Id} - Nombre: {reg.Nombre}");
+            }
+            Console.WriteLine();
             Console.Write("Ingrese el ID de la región a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
