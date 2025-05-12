@@ -148,7 +148,7 @@ namespace SGIC_APP.Application.UI
             {
                 Console.WriteLine($"ID: {ciudadItem.Id} - Nombre: {ciudadItem.Nombre}");
             }
-            Console.WriteLine();
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID de la ciudad a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
@@ -204,7 +204,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR CIUDAD ===\n");
-
+            // Listar las ciudades existentes para que el usuario pueda ver los ID y nombres
+            var ciudadesExistentes = _ciudadRepository.ObtenerTodos().ToList();
+            if (!ciudadesExistentes.Any())
+            {
+                Console.WriteLine("No hay ciudades registradas.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Ciudades existentes:");
+            foreach (var ciudadItem in ciudadesExistentes)
+            {
+                Console.WriteLine($"ID: {ciudadItem.Id} - Nombre: {ciudadItem.Nombre}");
+            }
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID de la ciudad a eliminar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {

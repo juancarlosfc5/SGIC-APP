@@ -154,7 +154,7 @@ namespace SGIC_APP.Application.UI
             {
                 Console.WriteLine($"ID: {emp.Id} - Nombre: {emp.Nombre}");
             }
-            Console.WriteLine();
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID de la empresa a actualizar: ");
             var id = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(id))
@@ -218,7 +218,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR EMPRESA ===\n");
-
+            // Listar las empresas existentes para que el usuario pueda ver los ID y nombres
+            var empresasExistentes = _empresaRepository.ObtenerTodos().ToList();
+            if (!empresasExistentes.Any())
+            {
+                Console.WriteLine("No hay empresas registradas.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Empresas existentes:");
+            foreach (var emp in empresasExistentes)
+            {
+                Console.WriteLine($"ID: {emp.Id} - Nombre: {emp.Nombre}");
+            }
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID de la empresa a eliminar: ");
             var id = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(id))

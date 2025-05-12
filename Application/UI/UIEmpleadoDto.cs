@@ -185,6 +185,7 @@ namespace SGIC_APP.Application.UI
             Console.WriteLine("Listado de empleados:");
             foreach (var emp in empleados)
                 Console.WriteLine($"Tercero_ID: {emp.TerceroId}  Nombre: {emp.Nombre} {emp.Apellidos}");
+                Console.WriteLine(new string('-', 50));
 
             Console.Write("\nIngrese el TERCERO_ID del empleado a actualizar: ");
             var id = Console.ReadLine();
@@ -243,6 +244,7 @@ namespace SGIC_APP.Application.UI
 
             foreach (var emp in empleados)
                 Console.WriteLine($"Tercero_ID: {emp.TerceroId} - {emp.Nombre} {emp.Apellidos}");
+                Console.WriteLine(new string('-', 50));
 
             Console.Write("\nIngrese el TERCERO_ID del empleado a eliminar: ");
             var id = Console.ReadLine();
