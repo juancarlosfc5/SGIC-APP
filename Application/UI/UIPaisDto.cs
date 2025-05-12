@@ -121,7 +121,7 @@ namespace SGIC_APP.Application.UI
             {
                 Console.WriteLine($"ID: {p.Id} - Nombre: {p.Nombre}");
             }
-            Console.WriteLine();
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID del país a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
@@ -164,7 +164,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR PAÍS ===\n");
-
+            // Listar los países existentes para que el usuario pueda ver sus ID y nombres
+            var paisesExistentes = _paisRepository.ObtenerTodos().ToList();
+            if (!paisesExistentes.Any())
+            {
+                Console.WriteLine("No hay países registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Países existentes:");
+            foreach (var p in paisesExistentes)
+            {
+                Console.WriteLine($"ID: {p.Id} - Nombre: {p.Nombre}");
+            }
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID del país a eliminar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {

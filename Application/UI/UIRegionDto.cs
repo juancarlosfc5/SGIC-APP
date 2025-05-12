@@ -148,7 +148,7 @@ namespace SGIC_APP.Application.UI
             {
                 Console.WriteLine($"ID: {reg.Id} - Nombre: {reg.Nombre}");
             }
-            Console.WriteLine();
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID de la región a actualizar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
@@ -204,7 +204,21 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR REGIÓN ===\n");
-
+            // Listar las regiones existentes para que el usuario pueda ver los ID
+            var regionesExistentes = _regionRepository.ObtenerTodos().ToList();
+            if (!regionesExistentes.Any())
+            {
+                Console.WriteLine("No hay regiones registradas.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Regiones existentes:");
+            foreach (var reg in regionesExistentes)
+            {
+                Console.WriteLine($"ID: {reg.Id} - Nombre: {reg.Nombre}");
+            }
+            Console.WriteLine(new string('-', 50));
             Console.Write("Ingrese el ID de la región a eliminar: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {

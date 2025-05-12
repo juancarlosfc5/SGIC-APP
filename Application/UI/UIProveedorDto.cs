@@ -94,41 +94,46 @@ namespace SGIC_APP.Application.UI
 
             var proveedor = new Proveedor();
 
+            // Solicitar TERCERO_ID y verificar si ya existe
+            Console.Write("TERCERO_ID: ");
+            var terceroId = Console.ReadLine() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(terceroId))
+                throw new Exception("El TERCERO_ID es requerido.");
+            if (_proveedorRepository.ObtenerPorId(terceroId) != null)
+            {
+                Console.WriteLine("\nEl número de identificación ingresado ya está registrado como proveedor.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            proveedor.TerceroId = terceroId;
+
             Console.Write("Nombre: ");
             proveedor.Nombre = Console.ReadLine() ?? throw new ArgumentException("El nombre es requerido");
-
             Console.Write("Apellidos: ");
             proveedor.Apellidos = Console.ReadLine() ?? throw new ArgumentException("Los apellidos son requeridos");
-
             Console.Write("Email: ");
             proveedor.Email = Console.ReadLine() ?? throw new ArgumentException("El email es requerido");
-
             Console.Write("Teléfono: ");
             proveedor.Telefono = Console.ReadLine() ?? throw new ArgumentException("El teléfono es requerido");
-
             Console.Write("Tipo de Teléfono: ");
             proveedor.TipoTelefono = Console.ReadLine() ?? throw new ArgumentException("El tipo de teléfono es requerido");
-
             Console.Write("Tipo de Documento ID: ");
             if (!int.TryParse(Console.ReadLine(), out int tipoDocId))
                 throw new ArgumentException("Tipo de documento inválido");
             proveedor.TipoDocId = tipoDocId;
-
             Console.Write("Tipo de Tercero ID: ");
             if (!int.TryParse(Console.ReadLine(), out int tipoTerceroId))
                 throw new ArgumentException("Tipo de tercero inválido");
             proveedor.TipoTerceroId = tipoTerceroId;
-
             Console.Write("Ciudad ID: ");
             if (!int.TryParse(Console.ReadLine(), out int ciudadId))
                 throw new ArgumentException("Ciudad inválida");
             proveedor.CiudadId = ciudadId;
-
             Console.Write("Descuento (%): ");
             if (!double.TryParse(Console.ReadLine(), out double descuento))
                 throw new ArgumentException("Descuento inválido");
             proveedor.Descuento = descuento;
-
             Console.Write("Día de Pago: ");
             if (!int.TryParse(Console.ReadLine(), out int diaPago))
                 throw new ArgumentException("Día de pago inválido");
@@ -144,62 +149,94 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ACTUALIZAR PROVEEDOR ===\n");
-            Console.Write("Ingrese el ID del proveedor a actualizar: ");
-
-            if (int.TryParse(Console.ReadLine(), out int id))
+            // Listar proveedores existentes
+            var proveedores = _proveedorRepository.ObtenerTodos().ToList();
+            if (!proveedores.Any())
             {
-                var proveedor = _proveedorRepository.ObtenerPorId(id.ToString());
-                if (proveedor != null)
-                {
-                    Console.Write("Nombre: ");
-                    proveedor.Nombre = Console.ReadLine() ?? proveedor.Nombre;
-
-                    Console.Write("Apellidos: ");
-                    proveedor.Apellidos = Console.ReadLine() ?? proveedor.Apellidos;
-
-                    Console.Write("Email: ");
-                    proveedor.Email = Console.ReadLine() ?? proveedor.Email;
-
-                    Console.Write("Teléfono: ");
-                    proveedor.Telefono = Console.ReadLine() ?? proveedor.Telefono;
-
-                    Console.Write("Tipo de Teléfono: ");
-                    proveedor.TipoTelefono = Console.ReadLine() ?? proveedor.TipoTelefono;
-
-                    Console.Write("Tipo de Documento ID: ");
-                    if (int.TryParse(Console.ReadLine(), out int tipoDocId))
-                        proveedor.TipoDocId = tipoDocId;
-
-                    Console.Write("Tipo de Tercero ID: ");
-                    if (int.TryParse(Console.ReadLine(), out int tipoTerceroId))
-                        proveedor.TipoTerceroId = tipoTerceroId;
-
-                    Console.Write("Ciudad ID: ");
-                    if (int.TryParse(Console.ReadLine(), out int ciudadId))
-                        proveedor.CiudadId = ciudadId;
-
-                    Console.Write("Descuento (%): ");
-                    if (double.TryParse(Console.ReadLine(), out double descuento))
-                        proveedor.Descuento = descuento;
-
-                    Console.Write("Día de Pago: ");
-                    if (int.TryParse(Console.ReadLine(), out int diaPago))
-                        proveedor.DiaPago = diaPago;
-
-                    _proveedorRepository.Actualizar(proveedor);
-                    Console.WriteLine("\nProveedor actualizado exitosamente.");
-                }
-                else
-                {
-                    Console.WriteLine("\nNo se encontró el proveedor.");
-                }
+                Console.WriteLine("No hay proveedores disponibles.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
             }
-            else
+            Console.WriteLine("Listado de proveedores disponibles:");
+            foreach (var p in proveedores)
             {
-                Console.WriteLine("\nID inválido.");
+                Console.WriteLine($"Tercero_ID: {p.TerceroId} - Nombre: {p.Nombre} {p.Apellidos}");
+            }
+            Console.WriteLine(new string('-', 50));
+
+            Console.Write("Ingrese el TERCERO_ID del proveedor a actualizar: ");
+            var id = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Console.WriteLine("\nEl TERCERO_ID no puede estar vacío.");
+                Console.ReadKey();
+                return;
             }
 
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            var proveedor = _proveedorRepository.ObtenerPorId(id);
+            if (proveedor == null)
+            {
+                Console.WriteLine("\nNo se encontró el proveedor.");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine("\nDeje en blanco los campos que no desee modificar.\n");
+
+            Console.Write($"Nombre ({proveedor.Nombre}): ");
+            var nombre = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(nombre))
+                proveedor.Nombre = nombre;
+
+            Console.Write($"Apellidos ({proveedor.Apellidos}): ");
+            var apellidos = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(apellidos))
+                proveedor.Apellidos = apellidos;
+
+            Console.Write($"Email ({proveedor.Email}): ");
+            var email = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(email))
+                proveedor.Email = email;
+
+            Console.Write($"Teléfono ({proveedor.Telefono}): ");
+            var telefono = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(telefono))
+                proveedor.Telefono = telefono;
+
+            Console.Write($"Tipo de Teléfono ({proveedor.TipoTelefono}): ");
+            var tipoTelefono = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(tipoTelefono))
+                proveedor.TipoTelefono = tipoTelefono;
+
+            Console.Write($"Tipo de Documento ID ({proveedor.TipoDocId}): ");
+            var tipoDocIdStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(tipoDocIdStr) && int.TryParse(tipoDocIdStr, out int tipoDocId))
+                proveedor.TipoDocId = tipoDocId;
+
+            Console.Write($"Tipo de Tercero ID ({proveedor.TipoTerceroId}): ");
+            var tipoTerceroIdStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(tipoTerceroIdStr) && int.TryParse(tipoTerceroIdStr, out int tipoTerceroId))
+                proveedor.TipoTerceroId = tipoTerceroId;
+
+            Console.Write($"Ciudad ID ({proveedor.CiudadId}): ");
+            var ciudadIdStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(ciudadIdStr) && int.TryParse(ciudadIdStr, out int ciudadId))
+                proveedor.CiudadId = ciudadId;
+
+            Console.Write($"Descuento (%) ({proveedor.Descuento}%): ");
+            var descuentoStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(descuentoStr) && double.TryParse(descuentoStr, out double descuento))
+                proveedor.Descuento = descuento;
+
+            Console.Write($"Día de Pago ({proveedor.DiaPago}): ");
+            var diaPagoStr = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(diaPagoStr) && int.TryParse(diaPagoStr, out int diaPago))
+                proveedor.DiaPago = diaPago;
+
+            _proveedorRepository.Actualizar(proveedor);
+            Console.WriteLine("\nProveedor actualizado exitosamente.");
+            Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
         }
 
@@ -207,37 +244,64 @@ namespace SGIC_APP.Application.UI
         {
             Console.Clear();
             Console.WriteLine("=== ELIMINAR PROVEEDOR ===\n");
-            Console.Write("Ingrese el ID del proveedor a eliminar: ");
-
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var proveedores = _proveedorRepository.ObtenerTodos().ToList();
+            if (!proveedores.Any())
             {
-                var proveedor = _proveedorRepository.ObtenerPorId(id.ToString());
-                if (proveedor != null)
-                {
-                    Console.WriteLine($"\n¿Está seguro de eliminar al proveedor {proveedor.Nombre} {proveedor.Apellidos}? (S/N)");
-                    var confirmacion = Console.ReadLine()?.ToUpper();
-                    if (confirmacion == "S")
-                    {
-                        _proveedorRepository.Eliminar(id.ToString());
-                        Console.WriteLine("\nProveedor eliminado exitosamente.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nOperación cancelada.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nNo se encontró el proveedor.");
-                }
+                Console.WriteLine("No hay proveedores disponibles.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
             }
-            else
+            Console.WriteLine("Listado de proveedores disponibles:");
+            foreach (var p in proveedores)
             {
-                Console.WriteLine("\nID inválido.");
+                Console.WriteLine($"Tercero_ID: {p.TerceroId} - Nombre: {p.Nombre} {p.Apellidos}");
             }
-
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.WriteLine(new string('-', 50));
+            Console.Write("Ingrese el TERCERO_ID del proveedor a eliminar: ");
+            var id = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Console.WriteLine("\nEl TERCERO_ID no puede estar vacío.");
+                Console.ReadKey();
+                return;
+            }
+            var proveedor = _proveedorRepository.ObtenerPorId(id);
+            if (proveedor == null)
+            {
+                Console.WriteLine("\nNo se encontró el proveedor.");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("\n¿Está seguro que desea eliminar el siguiente proveedor?");
+            MostrarProveedor(proveedor);
+            Console.Write("\nIngrese 'SI' para confirmar: ");
+            if (Console.ReadLine()?.ToUpper() != "SI")
+            {
+                Console.WriteLine("\nOperación cancelada.");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            _proveedorRepository.Eliminar(id);
+            Console.WriteLine("\nProveedor eliminado exitosamente.");
+            Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
+        }
+
+        private void MostrarProveedor(Proveedor proveedor)
+        {
+            Console.WriteLine($"Tercero_ID: {proveedor.TerceroId}");
+            Console.WriteLine($"Nombre: {proveedor.Nombre} {proveedor.Apellidos}");
+            Console.WriteLine($"Email: {proveedor.Email}");
+            Console.WriteLine($"Teléfono: {proveedor.Telefono}");
+            Console.WriteLine($"Tipo de Teléfono: {proveedor.TipoTelefono}");
+            Console.WriteLine($"Tipo de Documento ID: {proveedor.TipoDocId}");
+            Console.WriteLine($"Tipo de Tercero ID: {proveedor.TipoTerceroId}");
+            Console.WriteLine($"Ciudad ID: {proveedor.CiudadId}");
+            Console.WriteLine($"Descuento: {proveedor.Descuento}%");
+            Console.WriteLine($"Día de Pago: {proveedor.DiaPago}");
+            Console.WriteLine($"Fecha de Registro: {proveedor.FechaRegistro:dd/MM/yyyy}");
         }
     }
 } 

@@ -26,7 +26,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                     connection.Open();
                     using (var command = new MySqlCommand(@"
                         SELECT * FROM producto
-                        ORDER BY id DESC", connection))
+                        ORDER BY id ASC", connection))
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -199,7 +199,7 @@ namespace SGIC_APP.Infrastructure.Repositories
                     using (var command = new MySqlCommand(@"
                         SELECT * FROM producto
                         WHERE stock <= stock_min
-                        ORDER BY id DESC", connection))
+                        ORDER BY id ASC", connection))
                     {
                         using (var reader = command.ExecuteReader())
                         {
